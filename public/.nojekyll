@@ -1,0 +1,6 @@
+Stops GitHub Pages running Jekyll over the build output.
+
+Without this file Jekyll silently discards every directory whose name starts
+with an underscore — which includes _next/, where all the JavaScript, CSS and
+fonts live. The page would load as unstyled HTML with no interactivity and no
+error message explaining why.

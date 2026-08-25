@@ -4,6 +4,7 @@ import { useRef } from "react";
 import Image from "next/image";
 import { gsap, useGSAP } from "@/lib/gsap";
 import { useAudio } from "./AudioProvider";
+import { asset } from "@/lib/asset";
 import Waveform from "@/components/ui/Waveform";
 import { PlayIcon, PauseIcon } from "@/components/ui/icons";
 
@@ -54,7 +55,7 @@ export default function MiniPlayer() {
           <>
             <div className="relative size-11 shrink-0 overflow-hidden rounded-[2px] bg-paper-sleeve ring-1 ring-inset ring-ink/10">
               <Image
-                src={current.photo}
+                src={asset(current.photo)}
                 alt=""
                 fill
                 sizes="44px"

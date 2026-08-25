@@ -11,6 +11,7 @@ import {
   type ReactNode,
 } from "react";
 import type { Track } from "@/lib/data";
+import { asset } from "@/lib/asset";
 
 type AudioState = {
   current: Track | null;
@@ -89,7 +90,10 @@ export function AudioProvider({ children }: { children: ReactNode }) {
       setCurrent(track);
       setProgress(0);
       setDuration(0);
-      el.src = track.src;
+      // asset() rather than track.src directly: this is a raw DOM assignment,
+      // so Next's basePath rewriting doesn't apply and the file would 404
+      // wherever the site isn't served from the domain root.
+      el.src = asset(track.src);
       el.currentTime = 0;
       void el.play().catch(() => {
         // Missing file or a browser gesture rule — surface the player anyway

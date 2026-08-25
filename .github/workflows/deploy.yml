@@ -1,0 +1,65 @@
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  # Lets you re-deploy by hand from the Actions tab without pushing a commit
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Let an in-flight deploy finish rather than cancelling it, so a half-uploaded
+# build never becomes the live site.
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install
+        run: npm ci
+
+      - name: Build static export
+        env:
+          # The repo is served from a subpath on github.io. Delete this line
+          # if you attach a custom domain — a custom domain serves from the
+          # root and the prefix would then break every asset.
+          NEXT_PUBLIC_BASE_PATH: /Petting-
+        run: npm run build
+
+      - name: Fail if _next is missing
+        # Cheap guard against the classic Pages failure: Jekyll eating the
+        # underscore directory and shipping unstyled HTML with no error.
+        run: |
+          test -d out/_next || { echo "::error::out/_next missing — build did not export correctly"; exit 1; }
+          test -f out/.nojekyll || { echo "::error::out/.nojekyll missing — Jekyll will strip _next/"; exit 1; }
+          echo "out/ looks good:"
+          ls -la out | head -20
+
+      - uses: actions/configure-pages@v5
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: out
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

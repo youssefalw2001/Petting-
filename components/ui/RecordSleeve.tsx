@@ -3,6 +3,7 @@
 import { useRef, type ReactNode } from "react";
 import Image from "next/image";
 import { gsap, useGSAP, DESKTOP_MOTION } from "@/lib/gsap";
+import { asset } from "@/lib/asset";
 import { LogoMark } from "./Logo";
 
 /**
@@ -151,7 +152,7 @@ export default function RecordSleeve({
           <div className="flex h-full flex-col p-[7%]">
             <div className="relative flex-1 overflow-hidden rounded-[2px] bg-ink/5">
               <Image
-                src={photo}
+                src={asset(photo)}
                 alt={alt}
                 fill
                 sizes="(max-width: 768px) 88vw, 440px"
