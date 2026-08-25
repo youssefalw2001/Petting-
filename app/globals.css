@@ -1,0 +1,241 @@
+@import "tailwindcss";
+
+/* ==========================================================================
+   Sunbeam Records — design tokens
+   Warm, analog, print-inspired. No cool tones. No gradients as decoration.
+   ========================================================================== */
+
+@theme {
+  /* Surfaces */
+  --color-paper: #f7f4ef;
+  --color-paper-deep: #efe9e0;
+  --color-paper-sleeve: #e4dacb;
+
+  /* Ink */
+  --color-ink: #1f1b18;
+  --color-ink-soft: #4a423c;
+  --color-ink-faint: #8a7f75;
+
+  /* Accents */
+  --color-clay: #c4693d;
+  --color-clay-deep: #a5522c;
+  --color-sage: #7d8a6f;
+  --color-brass: #b8945f;
+
+  /* Lines */
+  --color-rule: #d8cec0;
+  --color-rule-soft: #e6ded2;
+
+  /* Motion — slow and confident. Nothing bouncy. */
+  --ease-sunbeam: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-sunbeam-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+
+  /* Layout */
+  --spacing-gutter: 1.5rem;
+}
+
+@theme inline {
+  --font-display: var(--font-fraunces);
+  --font-sans: var(--font-instrument);
+}
+
+/* ==========================================================================
+   Base
+   ========================================================================== */
+
+@layer base {
+  html {
+    /* Lenis drives scrolling; native smooth would fight it */
+    scroll-behavior: auto;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+
+  body {
+    background-color: var(--color-paper);
+    color: var(--color-ink-soft);
+    font-family: var(--font-sans), ui-sans-serif, system-ui, sans-serif;
+    font-size: 1.0625rem;
+    line-height: 1.65;
+    overflow-x: hidden;
+  }
+
+  /* Headlines: large serif at REGULAR weight reads expensive. Bold reads cheap. */
+  h1,
+  h2,
+  h3,
+  h4 {
+    font-family: var(--font-display), ui-serif, Georgia, serif;
+    font-weight: 400;
+    color: var(--color-ink);
+    font-variation-settings: "SOFT" 25, "WONK" 1, "opsz" 120;
+    letter-spacing: -0.02em;
+    line-height: 1.02;
+    text-wrap: pretty;
+  }
+
+  ::selection {
+    background-color: var(--color-clay);
+    color: var(--color-paper);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-clay);
+    outline-offset: 3px;
+    border-radius: 2px;
+  }
+
+  button,
+  a {
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  /* Lenis */
+  html.lenis,
+  html.lenis body {
+    height: auto;
+  }
+  .lenis.lenis-smooth {
+    scroll-behavior: auto !important;
+  }
+  .lenis.lenis-stopped {
+    overflow: hidden;
+  }
+  .lenis.lenis-smooth [data-lenis-prevent] {
+    overscroll-behavior: contain;
+  }
+}
+
+/* ==========================================================================
+   Type scale — big editorial jumps
+   ========================================================================== */
+
+@utility text-display {
+  font-size: clamp(2.75rem, 7vw, 6rem);
+  line-height: 0.98;
+  letter-spacing: -0.03em;
+}
+
+@utility text-h2 {
+  font-size: clamp(2rem, 4vw, 3.25rem);
+  line-height: 1.04;
+  letter-spacing: -0.025em;
+}
+
+@utility text-h3 {
+  font-size: clamp(1.25rem, 1.6vw, 1.5rem);
+  line-height: 1.25;
+  letter-spacing: -0.01em;
+}
+
+@utility text-lede {
+  font-size: clamp(1.0625rem, 1.35vw, 1.25rem);
+  line-height: 1.6;
+  max-width: 46ch;
+}
+
+/* Uppercase letterspaced meta label — used for eyebrows and catalog numbers */
+@utility eyebrow {
+  font-family: var(--font-sans), sans-serif;
+  font-size: 0.6875rem;
+  font-weight: 500;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--color-ink-faint);
+}
+
+@utility measure {
+  max-width: 65ch;
+}
+
+/* Fraunces' quirk axes. Applied automatically to h1–h4; this is for anywhere
+   else the display face is used (blockquotes, pricing figures, the wordmark). */
+@utility wonk {
+  font-variation-settings: "SOFT" 25, "WONK" 1, "opsz" 120;
+}
+
+/* ==========================================================================
+   Print-shop details
+   ========================================================================== */
+
+/* Hairline divider */
+@utility rule-line {
+  border-top: 1px solid var(--color-rule);
+}
+
+/* Paper grain. This single detail does more anti-"AI site" work than
+   anything else in the system. Fixed overlay, multiply blend. */
+@utility grain-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  pointer-events: none;
+  opacity: 0.38;
+  mix-blend-mode: multiply;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.82' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='220' height='220' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 220px 220px;
+}
+
+/* Masked line reveal — SplitText wraps lines in these */
+@utility line-mask {
+  overflow: clip;
+  display: block;
+}
+
+/* Elements that GSAP will reveal start hidden — but ONLY when JS is running.
+   The `js` class is set by a blocking inline script in <head>, so with JS
+   disabled (or if a chunk fails) every one of these stays visible instead of
+   leaving a blank page. */
+@layer base {
+  html.js .pre-reveal {
+    opacity: 0;
+    visibility: hidden;
+  }
+
+  /* SplitText line wrappers need to sit on their own line to clip correctly */
+  .split-line {
+    display: block;
+  }
+}
+
+/* Content shell */
+@utility shell {
+  width: 100%;
+  max-width: 78rem;
+  margin-inline: auto;
+  padding-inline: clamp(1.5rem, 4vw, 2.5rem);
+}
+
+/* ==========================================================================
+   Marquee
+   ========================================================================== */
+
+@keyframes marquee {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    transform: translate3d(-50%, 0, 0);
+  }
+}
+
+@utility marquee-track {
+  animation: marquee linear infinite;
+  will-change: transform;
+}
+
+/* ==========================================================================
+   Reduced motion — hard stop
+   ========================================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
