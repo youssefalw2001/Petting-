@@ -9,10 +9,13 @@ const base =
   "active:translate-y-px disabled:pointer-events-none disabled:opacity-50";
 
 const variants: Record<Variant, string> = {
-  primary: "bg-clay text-paper hover:bg-clay-deep",
+  // clay-deep, not clay: paper on clay is 3.52:1 and this is the primary CTA.
+  // Hover steps DOWN to clay-press (6.40:1) — going lighter would drop it
+  // back under AA on the one interaction most likely to be used.
+  primary: "bg-clay-deep text-paper hover:bg-clay-press",
   outline:
     "border border-ink/25 text-ink hover:border-ink/60 hover:bg-ink/[0.03]",
-  quiet: "text-ink-soft hover:text-clay",
+  quiet: "text-ink-soft hover:text-clay-deep",
 };
 
 const sizes: Record<Size, string> = {

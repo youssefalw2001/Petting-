@@ -50,19 +50,19 @@ export default function Nav() {
         <nav className="flex items-center gap-1 sm:gap-2">
           <a
             href="#listen"
-            className="hidden px-3 py-2 text-[0.9375rem] text-ink-soft transition-colors duration-300 hover:text-clay sm:block"
+            className="hidden px-3 py-2 text-[0.9375rem] text-ink-soft transition-colors duration-300 hover:text-clay-deep sm:block"
           >
             Listen
           </a>
           <a
             href="#how"
-            className="hidden px-3 py-2 text-[0.9375rem] text-ink-soft transition-colors duration-300 hover:text-clay md:block"
+            className="hidden px-3 py-2 text-[0.9375rem] text-ink-soft transition-colors duration-300 hover:text-clay-deep md:block"
           >
             How it works
           </a>
           <a
             href="#pricing"
-            className="hidden px-3 py-2 text-[0.9375rem] text-ink-soft transition-colors duration-300 hover:text-clay sm:block"
+            className="hidden px-3 py-2 text-[0.9375rem] text-ink-soft transition-colors duration-300 hover:text-clay-deep sm:block"
           >
             Pricing
           </a>

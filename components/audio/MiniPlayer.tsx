@@ -65,7 +65,7 @@ export default function MiniPlayer() {
 
             <button
               onClick={() => toggle(current)}
-              className="flex size-10 shrink-0 items-center justify-center rounded-full bg-clay text-paper transition-colors duration-300 hover:bg-clay-deep"
+              className="flex size-10 shrink-0 items-center justify-center rounded-full bg-clay-deep text-paper transition-colors duration-300 hover:bg-clay-press"
               aria-label={isPlaying ? `Pause ${current.petName}` : `Play ${current.petName}`}
             >
               {isPlaying ? (

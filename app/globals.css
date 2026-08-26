@@ -14,11 +14,21 @@
   /* Ink */
   --color-ink: #1f1b18;
   --color-ink-soft: #4a423c;
-  --color-ink-faint: #8a7f75;
+  /* 4.77:1 on paper-deep, 5.25:1 on paper — clears AA for the 11px eyebrows.
+     Deliberately NOT taken darker to also clear paper-sleeve (that needs
+     #655b52): the faintness is load-bearing for the editorial look, and the
+     sleeve has only two faint strings, which use ink-soft instead. */
+  --color-ink-faint: #6f645a;
 
-  /* Accents */
+  /* Accents.
+     clay is for DECORATION ONLY — rules, dots, marks, active states. It can
+     never sit under text in either direction: paper-on-clay and clay-on-paper
+     are both 3.52:1. Anything bearing text uses clay-deep (4.98:1 on paper,
+     4.98:1 under paper), and clay-press is the hover/active step down, which
+     has to go darker rather than lighter to stay compliant. */
   --color-clay: #c4693d;
   --color-clay-deep: #a5522c;
+  --color-clay-press: #8c4522;
   --color-sage: #7d8a6f;
   --color-brass: #b8945f;
 
@@ -81,9 +91,16 @@
   }
 
   :focus-visible {
-    outline: 2px solid var(--color-clay);
+    outline: 2px solid var(--focus-ring, var(--color-clay));
     outline-offset: 3px;
     border-radius: 2px;
+  }
+
+  /* Sections on ink or clay-deep flip the ring to paper. A clay ring on
+     clay-deep is 1.41:1 — the focus indicator was invisible on the closing
+     CTA, which is the one section where a keyboard user is about to buy. */
+  .surface-dark {
+    --focus-ring: var(--color-paper);
   }
 
   button,

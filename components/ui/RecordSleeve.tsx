@@ -132,7 +132,7 @@ export default function RecordSleeve({
             }}
           >
             {/* centre label */}
-            <div className="absolute left-1/2 top-1/2 flex aspect-square w-[34%] -translate-x-1/2 -translate-y-1/2 flex-col items-center justify-center rounded-full bg-clay text-paper">
+            <div className="absolute left-1/2 top-1/2 flex aspect-square w-[34%] -translate-x-1/2 -translate-y-1/2 flex-col items-center justify-center rounded-full bg-clay-deep text-paper">
               <LogoMark className="h-[38%] w-[38%] opacity-90" />
               <span className="mt-[6%] text-[0.44rem] font-medium uppercase leading-none tracking-[0.18em] opacity-85">
                 {catalog}
@@ -172,12 +172,14 @@ export default function RecordSleeve({
                   {petName}
                 </p>
                 {meta && (
-                  <p className="mt-1.5 truncate text-[0.6875rem] font-medium uppercase tracking-[0.16em] text-ink-faint">
+                  /* ink-soft, not ink-faint: this sits on paper-sleeve, the
+                     darkest surface, where ink-faint is only 4.17:1. 7.11:1 */
+                  <p className="mt-1.5 truncate text-[0.6875rem] font-medium uppercase tracking-[0.16em] text-ink-soft">
                     {meta}
                   </p>
                 )}
               </div>
-              <span className="shrink-0 text-[0.5625rem] font-medium uppercase tracking-[0.2em] text-ink-faint">
+              <span className="shrink-0 text-[0.5625rem] font-medium uppercase tracking-[0.2em] text-ink-soft">
                 {catalog}
               </span>
             </div>

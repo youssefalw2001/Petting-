@@ -13,10 +13,11 @@ import { KEY_QUESTION, INTAKE_SAMPLE } from "@/lib/data";
  */
 export default function IntakeTease() {
   return (
-    <section className="relative overflow-hidden bg-ink py-24 text-paper md:py-32">
+    <section className="surface-dark relative overflow-hidden bg-ink py-24 text-paper md:py-32">
       <div className="shell">
         <div className="mx-auto max-w-3xl text-center">
-          <p className="eyebrow !text-paper/45">The question that matters</p>
+          {/* /45 was 4.17:1 on ink; /55 is 5.54:1 */}
+          <p className="eyebrow !text-paper/55">The question that matters</p>
 
           <SplitReveal
             as="blockquote"

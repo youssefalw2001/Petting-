@@ -13,7 +13,7 @@ export default function FinalCTA() {
         <Marquee items={PET_NAMES} speed={72} />
       </section>
 
-      <section className="relative overflow-hidden bg-clay py-24 text-paper md:py-32">
+      <section className="surface-dark relative overflow-hidden bg-clay-deep py-24 text-paper md:py-32">
         {/* oversized mark, bled off the corner */}
         <LogoMark
           className="pointer-events-none absolute -bottom-24 -right-20 size-96 text-paper/10"
@@ -21,14 +21,17 @@ export default function FinalCTA() {
 
         <div className="shell relative">
           <div className="max-w-2xl">
-            <p className="eyebrow !text-paper/50">Sunbeam Records</p>
+            {/* full-strength paper: on clay-deep, paper/50 is 2.22:1 */}
+            <p className="eyebrow !text-paper">Sunbeam Records</p>
 
             <SplitReveal as="h2" className="mt-7 text-h2 !text-paper">
               Tell us about them. We&rsquo;ll take it from there.
             </SplitReveal>
 
             <Reveal delay={0.2}>
-              <p className="mt-7 max-w-lg text-[1.0625rem] leading-relaxed text-paper/75">
+              {/* full-strength paper: paper/75 on clay-deep is only 3.55:1,
+                  and paper/90 still only reaches 4.37:1 */}
+              <p className="mt-7 max-w-lg text-[1.0625rem] leading-relaxed text-paper">
                 Thirteen questions, about five minutes. The song lands in your
                 inbox two days later, and it will only ever exist for you.
               </p>
@@ -47,7 +50,9 @@ export default function FinalCTA() {
                   href="#listen"
                   size="lg"
                   variant="outline"
-                  className="!border-paper/35 !text-paper hover:!border-paper hover:!bg-paper/10"
+                  // paper/35 border was 1.88:1 — under the 3:1 that 1.4.11
+                  // requires for a control boundary. /80 is 3.81:1.
+                  className="!border-paper/80 !text-paper hover:!border-paper hover:!bg-paper/10"
                 >
                   Hear one first
                 </ButtonLink>

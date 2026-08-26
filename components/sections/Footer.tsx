@@ -17,7 +17,7 @@ export default function Footer() {
 
           <a
             href="mailto:hello@sunbeamrecords.com"
-            className="text-[0.9375rem] text-clay underline decoration-clay/30 decoration-1 underline-offset-4 transition-colors duration-300 hover:decoration-clay"
+            className="text-[0.9375rem] text-clay-deep underline decoration-clay-deep/40 decoration-1 underline-offset-4 transition-colors duration-300 hover:decoration-clay-deep"
           >
             hello@sunbeamrecords.com
           </a>
@@ -29,19 +29,19 @@ export default function Footer() {
             <nav className="flex items-center gap-6 text-[0.75rem] uppercase tracking-[0.14em] text-ink-faint">
               <a
                 href="#listen"
-                className="transition-colors duration-300 hover:text-clay"
+                className="transition-colors duration-300 hover:text-clay-deep"
               >
                 Listen
               </a>
               <a
                 href="#pricing"
-                className="transition-colors duration-300 hover:text-clay"
+                className="transition-colors duration-300 hover:text-clay-deep"
               >
                 Pricing
               </a>
               <a
                 href="#how"
-                className="transition-colors duration-300 hover:text-clay"
+                className="transition-colors duration-300 hover:text-clay-deep"
               >
                 How it works
               </a>

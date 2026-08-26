@@ -43,7 +43,7 @@ export default function FAQ() {
                         aria-controls={`faq-panel-${i}`}
                         className="group flex w-full items-start justify-between gap-6 py-6 text-left"
                       >
-                        <span className="text-h3 font-display text-ink transition-colors duration-300 group-hover:text-clay">
+                        <span className="text-h3 font-display text-ink transition-colors duration-300 group-hover:text-clay-deep">
                           {faq.q}
                         </span>
                         <span

@@ -104,7 +104,7 @@ export default function SampleCard({ track }: { track: Track }) {
               "flex size-11 shrink-0 items-center justify-center rounded-full transition-colors duration-300",
               isThisPlaying
                 ? "bg-ink text-paper"
-                : "bg-clay text-paper hover:bg-clay-deep",
+                : "bg-clay-deep text-paper hover:bg-clay-press",
             ].join(" ")}
             aria-label={
               isThisPlaying
