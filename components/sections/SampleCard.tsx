@@ -1,64 +1,18 @@
 "use client";
 
-import { useRef } from "react";
-import { gsap, useGSAP, DESKTOP_MOTION } from "@/lib/gsap";
 import { useAudio } from "@/components/audio/AudioProvider";
 import RecordSleeve from "@/components/ui/RecordSleeve";
-import Waveform from "@/components/ui/Waveform";
 import { PlayIcon, PauseIcon } from "@/components/ui/icons";
 import type { Track } from "@/lib/data";
 
 export default function SampleCard({ track }: { track: Track }) {
   const { current, isPlaying, progress, toggle } = useAudio();
-  const ref = useRef<HTMLDivElement>(null);
 
   const isCurrent = current?.id === track.id;
   const isThisPlaying = isCurrent && isPlaying;
 
-  // A custom cursor that follows the pointer over the sleeve. Desktop only —
-  // there is no pointer to follow on a phone.
-  useGSAP(
-    () => {
-      const el = ref.current;
-      if (!el) return;
-      const cursor = el.querySelector<HTMLElement>("[data-cursor]");
-      const hit = el.querySelector<HTMLElement>("[data-hit]");
-      if (!cursor || !hit) return;
-
-      const mm = gsap.matchMedia();
-
-      mm.add(DESKTOP_MOTION, () => {
-        const x = gsap.quickTo(cursor, "x", { duration: 0.35, ease: "power3" });
-        const y = gsap.quickTo(cursor, "y", { duration: 0.35, ease: "power3" });
-
-        const onMove = (e: PointerEvent) => {
-          const r = hit.getBoundingClientRect();
-          x(e.clientX - r.left);
-          y(e.clientY - r.top);
-        };
-        const onEnter = () =>
-          gsap.to(cursor, { scale: 1, autoAlpha: 1, duration: 0.4 });
-        const onLeave = () =>
-          gsap.to(cursor, { scale: 0.6, autoAlpha: 0, duration: 0.3 });
-
-        hit.addEventListener("pointermove", onMove);
-        hit.addEventListener("pointerenter", onEnter);
-        hit.addEventListener("pointerleave", onLeave);
-
-        return () => {
-          hit.removeEventListener("pointermove", onMove);
-          hit.removeEventListener("pointerenter", onEnter);
-          hit.removeEventListener("pointerleave", onLeave);
-        };
-      });
-
-      return () => mm.revert();
-    },
-    { scope: ref }
-  );
-
   return (
-    <div ref={ref} className="group flex flex-col">
+    <div className="group flex flex-col">
       <div data-hit className="relative cursor-pointer">
         <RecordSleeve
           photo={track.photo}
@@ -81,18 +35,6 @@ export default function SampleCard({ track }: { track: Track }) {
           }
         />
 
-        {/* follower cursor */}
-        <div
-          data-cursor
-          aria-hidden="true"
-          className="pointer-events-none absolute left-0 top-0 z-40 flex size-16 -translate-x-1/2 -translate-y-1/2 scale-[0.6] items-center justify-center rounded-full bg-ink text-paper opacity-0"
-        >
-          {isThisPlaying ? (
-            <PauseIcon className="size-3" />
-          ) : (
-            <PlayIcon className="ml-0.5 size-3" />
-          )}
-        </div>
       </div>
 
       {/* controls + story */}
@@ -119,12 +61,17 @@ export default function SampleCard({ track }: { track: Track }) {
             )}
           </button>
 
-          <Waveform
-            bars={48}
-            seed={track.seed}
-            progress={isCurrent ? progress : 0}
-            className="h-8 flex-1"
-          />
+          {/* Playback position as a hairline that fills, not a waveform.
+              Reuses the print rule already used as a divider site-wide
+              instead of importing a DAW signifier. scaleX on a transform,
+              so it stays off the layout path. */}
+          <div className="relative h-px flex-1 bg-rule">
+            <div
+              aria-hidden="true"
+              className="absolute inset-y-0 left-0 w-full origin-left bg-clay-deep"
+              style={{ transform: `scaleX(${isCurrent ? progress : 0})` }}
+            />
+          </div>
         </div>
 
         <p className="mt-5 text-[0.9375rem] leading-relaxed text-ink-soft">

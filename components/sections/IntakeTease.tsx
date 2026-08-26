@@ -1,6 +1,5 @@
 import SplitReveal from "@/components/ui/SplitReveal";
 import Reveal from "@/components/ui/Reveal";
-import ScrubWaveform from "@/components/ui/ScrubWaveform";
 import { KEY_QUESTION, INTAKE_SAMPLE } from "@/lib/data";
 
 /**
@@ -35,15 +34,6 @@ export default function IntakeTease() {
             </p>
           </Reveal>
 
-          <Reveal delay={0.35} className="mt-12">
-            <ScrubWaveform
-              bars={64}
-              seed={29}
-              tone="light"
-              className="mx-auto h-9 w-full max-w-md"
-              end="+=50%"
-            />
-          </Reveal>
         </div>
 
         {/* the rest of the intake, quietly */}
@@ -56,12 +46,8 @@ export default function IntakeTease() {
           {INTAKE_SAMPLE.map((q) => (
             <p
               key={q}
-              className="flex items-start gap-3 text-[0.9375rem] leading-relaxed text-paper/55"
+              className="text-[0.9375rem] leading-relaxed text-paper/55"
             >
-              <span
-                className="mt-[0.6em] inline-block size-[3px] shrink-0 rounded-full bg-clay"
-                aria-hidden="true"
-              />
               {q}
             </p>
           ))}

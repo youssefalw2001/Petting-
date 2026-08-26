@@ -2,10 +2,8 @@
 
 import SplitReveal from "@/components/ui/SplitReveal";
 import Reveal from "@/components/ui/Reveal";
-import ScrubWaveform from "@/components/ui/ScrubWaveform";
 import RecordSleeve from "@/components/ui/RecordSleeve";
 import { ButtonLink } from "@/components/ui/Button";
-import { ScrollHintIcon } from "@/components/ui/icons";
 import { TRACKS } from "@/lib/data";
 
 /**
@@ -20,18 +18,6 @@ export default function Hero() {
 
   return (
     <section id="top" className="relative overflow-hidden pb-20 pt-32 md:pb-28 md:pt-40">
-      {/* faint pressing-plant detail, running down the right edge.
-          writing-mode rather than rotate: rotating around origin-right pushes
-          the box off-canvas and clips it. */}
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute right-5 top-32 hidden select-none xl:block"
-      >
-        <span className="eyebrow opacity-55 [writing-mode:vertical-rl]">
-          Est. 2026 · One pressing per family
-        </span>
-      </div>
-
       <div className="shell">
         <div className="grid items-center gap-14 lg:grid-cols-[1.05fr_0.95fr] lg:gap-20">
           {/* ── text column ── */}
@@ -62,28 +48,22 @@ export default function Hero() {
               </p>
             </Reveal>
 
+            {/* One action. The second CTA is a text link, not a second
+                button: two buttons of equal weight is a stall, and the
+                purchase path stays one click away in the nav regardless. */}
             <Reveal delay={1} className="mt-9">
-              <div className="flex flex-wrap items-center gap-3">
+              <div className="flex flex-wrap items-center gap-x-7 gap-y-4">
                 <ButtonLink href="#listen" size="lg">
                   Hear a song
                 </ButtonLink>
-                <ButtonLink href="#pricing" size="lg" variant="outline">
+                <a
+                  href="#pricing"
+                  className="text-[0.9375rem] text-ink-soft underline decoration-rule decoration-1 underline-offset-4 transition-colors duration-300 hover:text-clay-deep hover:decoration-clay-deep"
+                >
                   Make their song — $97
-                </ButtonLink>
+                </a>
               </div>
             </Reveal>
-
-            {/* the scroll-scrubbed waveform */}
-            <div className="mt-14 max-w-lg">
-              <ScrubWaveform bars={84} seed={11} className="h-12 w-full" />
-              <div className="mt-3 flex items-center justify-between">
-                <span className="eyebrow">Side A · {featured.petName}</span>
-                <span className="eyebrow inline-flex items-center gap-2">
-                  Scroll
-                  <ScrollHintIcon className="h-3.5 w-2 text-clay" />
-                </span>
-              </div>
-            </div>
           </div>
 
           {/* ── sleeve column ── */}

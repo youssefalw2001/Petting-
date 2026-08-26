@@ -49,10 +49,7 @@ export default function HowItWorks() {
         <div className="grid gap-14 lg:grid-cols-[0.85fr_1.15fr] lg:gap-20">
           {/* sticky column */}
           <div className="lg:sticky lg:top-32 lg:self-start">
-            <p className="eyebrow flex items-center gap-3">
-              <span className="inline-block h-px w-8 bg-clay" />
-              How it works
-            </p>
+            <p className="eyebrow">How it works</p>
 
             <SplitReveal as="h2" className="mt-6 text-h2">
               Five minutes of your memory. Forty-eight hours of ours.

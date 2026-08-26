@@ -21,10 +21,7 @@ export default function FAQ() {
       <div className="shell">
         <div className="grid gap-12 lg:grid-cols-[0.7fr_1.3fr] lg:gap-20">
           <div className="lg:sticky lg:top-32 lg:self-start">
-            <p className="eyebrow flex items-center gap-3">
-              <span className="inline-block h-px w-8 bg-clay" />
-              Questions
-            </p>
+            <p className="eyebrow">Questions</p>
             <SplitReveal as="h2" className="mt-6 text-h2">
               The things people ask first.
             </SplitReveal>

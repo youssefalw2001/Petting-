@@ -56,7 +56,6 @@ export default function RecordSleeve({
 
       mm.add(DESKTOP_MOTION, () => {
         const inner = el.querySelector<HTMLElement>("[data-sleeve-inner]");
-        const disc = el.querySelector<HTMLElement>("[data-sleeve-disc]");
         if (!inner) return;
 
         const rotX = gsap.quickTo(inner, "rotationX", {
@@ -80,27 +79,17 @@ export default function RecordSleeve({
           rotX(0);
         };
 
+        // The idle float loop and the 68s disc rotation are both gone. Three
+        // simultaneous behaviours on one object read as restless, and two of
+        // the three ran forever whether or not anyone was looking at them.
+        // Pointer tilt is the one that only happens when someone is actually
+        // engaging with the sleeve, so it's the one that survives.
         el.addEventListener("pointermove", onMove);
         el.addEventListener("pointerleave", onLeave);
-
-        // Idle float, and the disc turns very slowly — barely perceptible,
-        // but the sleeve feels alive rather than pasted on.
-        const float = gsap.to(inner, {
-          y: -9,
-          duration: 4.5,
-          ease: "sine.inOut",
-          repeat: -1,
-          yoyo: true,
-        });
-        const spin = disc
-          ? gsap.to(disc, { rotation: 360, duration: 68, ease: "none", repeat: -1 })
-          : null;
 
         return () => {
           el.removeEventListener("pointermove", onMove);
           el.removeEventListener("pointerleave", onLeave);
-          float.kill();
-          spin?.kill();
         };
       });
 

@@ -1,17 +1,15 @@
 import SplitReveal from "@/components/ui/SplitReveal";
 import Reveal from "@/components/ui/Reveal";
-import Marquee from "@/components/ui/Marquee";
 import { ButtonLink } from "@/components/ui/Button";
 import { LogoMark } from "@/components/ui/Logo";
-import { PET_NAMES } from "@/lib/data";
 
 export default function FinalCTA() {
   return (
     <>
-      {/* names drifting past — social proof without a carousel */}
-      <section className="border-y border-rule bg-paper py-10">
-        <Marquee items={PET_NAMES} speed={72} />
-      </section>
+      {/* The 28-name marquee is gone. It was the busiest element on the page,
+          it ran continuously on mobile as well as desktop, and every name in
+          PET_NAMES is invented — so it was fabricated social proof presented
+          as a customer list. Restore it only with real names. */}
 
       <section className="surface-dark relative overflow-hidden bg-clay-deep py-24 text-paper md:py-32">
         {/* oversized mark, bled off the corner */}

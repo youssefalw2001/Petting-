@@ -1,73 +1,41 @@
-"use client";
-
-import { useRef } from "react";
-import { gsap, useGSAP, DESKTOP_MOTION } from "@/lib/gsap";
 import SplitReveal from "@/components/ui/SplitReveal";
 import Reveal from "@/components/ui/Reveal";
 import { REACTIONS, REACTIONS_ARE_PLACEHOLDER } from "@/lib/data";
 
 /**
- * Three columns drifting at slightly different speeds.
+ * Three columns of quotes.
  *
- * Column-level parallax rather than per-card, so the effect reads as depth
- * instead of noise. Desktop only — parallax on a phone just costs frames.
+ * The column-level parallax drift is gone. On a page that already reveals
+ * every block on scroll, a second scroll-linked motion on the same content
+ * read as drift rather than depth — and it was the third scroll-driven
+ * behaviour competing for the same gesture.
  */
 export default function Reactions() {
-  const ref = useRef<HTMLDivElement>(null);
-
   const columns = [
     REACTIONS.filter((_, i) => i % 3 === 0),
     REACTIONS.filter((_, i) => i % 3 === 1),
     REACTIONS.filter((_, i) => i % 3 === 2),
   ];
 
-  useGSAP(
-    () => {
-      const el = ref.current;
-      if (!el) return;
-
-      const mm = gsap.matchMedia();
-
-      mm.add(DESKTOP_MOTION, () => {
-        const cols = el.querySelectorAll<HTMLElement>("[data-col]");
-        const offsets = [0, -58, -26];
-
-        cols.forEach((col, i) => {
-          gsap.to(col, {
-            y: offsets[i] ?? 0,
-            ease: "none",
-            scrollTrigger: {
-              trigger: el,
-              start: "top bottom",
-              end: "bottom top",
-              scrub: 0.8,
-            },
-          });
-        });
-      });
-
-      return () => mm.revert();
-    },
-    { scope: ref }
-  );
-
   return (
     <section className="bg-paper-deep py-24 md:py-32">
       <div className="shell">
         <div className="max-w-2xl">
-          <p className="eyebrow flex items-center gap-3">
-            <span className="inline-block h-px w-8 bg-clay" />
-            What comes back
-          </p>
+          <p className="eyebrow">What comes back</p>
           <SplitReveal as="h2" className="mt-6 text-h2">
             People tend to write to us the same day.
           </SplitReveal>
         </div>
 
         {REACTIONS_ARE_PLACEHOLDER && (
+          /* Styled as a build artifact, not page content. It was previously a
+             clay-bordered card, which made a note addressed to a developer the
+             loudest element in the section. Deliberately NOT hidden behind an
+             env check: that would ship invented reviews to production with no
+             warning at all, which is the outcome the guard exists to prevent. */
           <div
             role="note"
-            className="mt-10 rounded-[3px] border border-clay/40 bg-clay/[0.07] px-5 py-4 text-[0.875rem] leading-relaxed text-ink"
+            className="mt-10 border-y border-dashed border-ink/25 py-3 font-mono text-[0.75rem] leading-relaxed text-ink-soft"
           >
             <strong className="font-medium">
               Placeholder testimonials — replace before launch.
@@ -82,20 +50,19 @@ export default function Reactions() {
           </div>
         )}
 
-        <div ref={ref} className="mt-14 grid gap-6 md:grid-cols-3 md:gap-7">
+        <div className="mt-14 grid gap-6 md:grid-cols-3 md:gap-7">
           {columns.map((col, ci) => (
-            <div key={ci} data-col className="flex flex-col gap-6 md:gap-7">
+            <div key={ci} className="flex flex-col gap-6 md:gap-7">
               {col.map((r, i) => (
                 <Reveal key={i} delay={i * 0.08} start="top 92%">
-                  <figure className="rounded-[3px] border border-rule bg-paper px-6 py-7">
+                  {/* Open on a hairline instead of boxed in a bordered card.
+                      A quote and a pricing tier were previously the same
+                      object; now the eye can tell them apart without reading. */}
+                  <figure className="border-t border-rule pt-6">
                     <blockquote className="wonk font-display text-[1.1875rem] leading-[1.42] text-ink">
                       &ldquo;{r.quote}&rdquo;
                     </blockquote>
-                    <figcaption className="mt-5 flex items-center gap-2.5 border-t border-rule-soft pt-4 text-[0.6875rem] font-medium uppercase tracking-[0.16em] text-ink-faint">
-                      <span
-                        className="inline-block size-[3px] rounded-full bg-clay"
-                        aria-hidden="true"
-                      />
+                    <figcaption className="mt-5 text-[0.6875rem] font-medium uppercase tracking-[0.16em] text-ink-faint">
                       {r.name} · {r.detail}
                     </figcaption>
                   </figure>
