@@ -17,7 +17,7 @@ from pathlib import Path
 RATE = 22050
 LENGTH = 12.0
 
-OUT = Path(__file__).resolve().parent.parent / "public" / "samples"
+OUT = Path(__file__).resolve().parent.parent / "public" / "songs"
 
 
 def note(freq, t, dur, kind):
@@ -97,16 +97,20 @@ def n(name):
 
 print("Generating placeholder samples...")
 
-# Gentle acoustic — open, warm, major
+# Buddy — gentle acoustic, open and warm
 build([n("C3"), n("G3"), n("C4"), n("E4"), n("G4"), n("E4")],
-      "pluck", 96, OUT / "biscuit.wav")
+      "pluck", 92, OUT / "buddy.wav")
 
-# Piano ballad — minor, slower, more sustain
+# Milo — piano, slower, more sustain
+build([n("F2"), n("C3"), n("F3"), n("A3"), n("C4"), n("A3")],
+      "piano", 72, OUT / "milo.wav")
+
+# Luna — minor, sparse and close
 build([n("A2"), n("E3"), n("A3"), n("C4"), n("E4"), n("C4")],
-      "piano", 68, OUT / "olive.wav")
+      "piano", 66, OUT / "luna.wav")
 
-# Country — brighter, a little quicker
+# Charlie — warmer, a little brighter
 build([n("G2"), n("D3"), n("G3"), n("B3"), n("D4"), n("B3")],
-      "pluck", 112, OUT / "tucker.wav")
+      "pluck", 104, OUT / "charlie.wav")
 
 print("Done.")

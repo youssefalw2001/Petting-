@@ -1,84 +1,53 @@
 "use client";
 
-import { useRef, type ReactNode } from "react";
-import { gsap, useGSAP, MOTION_OK } from "@/lib/gsap";
-
-type Mode = "rise" | "unmask";
+import { useEffect } from "react";
 
 /**
- * Scroll reveal for blocks and imagery.
+ * The only animation on the site: a single gentle rise-and-fade as each block
+ * enters view.
  *
- * `rise`   — gentle lift + fade. For text blocks, cards, list items.
- * `unmask` — clip-path wipe upward with a slow settle from 1.06 scale.
- *            For photography. Never bounces; overshoot reads as playful and
- *            this product is not playful.
+ * Mounted once in the layout and driven by one IntersectionObserver over every
+ * `[data-reveal]` element, so no section carries its own animation code and
+ * there is nothing to keep in sync.
+ *
+ * This replaced GSAP, ScrollTrigger, SplitText and Lenis. A memorial page does
+ * not need scroll-jacking, split-text choreography or an animation library — it
+ * needs to load fast and sit still. Dropping all four removed three
+ * dependencies and every infinite loop from the page.
+ *
+ * The transition itself lives in CSS, which means `prefers-reduced-motion`
+ * disables it without any JavaScript branch.
  */
-export default function Reveal({
-  children,
-  className = "",
-  mode = "rise",
-  delay = 0,
-  stagger = 0,
-  start = "top 85%",
-}: {
-  children: ReactNode;
-  className?: string;
-  mode?: Mode;
-  delay?: number;
-  /** When set, direct children stagger in instead of the wrapper animating. */
-  stagger?: number;
-  start?: string;
-}) {
-  const ref = useRef<HTMLDivElement>(null);
+export default function Reveal() {
+  useEffect(() => {
+    const els = Array.from(
+      document.querySelectorAll<HTMLElement>("[data-reveal]")
+    );
+    if (!els.length) return;
 
-  useGSAP(
-    () => {
-      const el = ref.current;
-      if (!el) return;
+    // Old browsers, or anything without IO: show everything immediately.
+    if (typeof IntersectionObserver === "undefined") {
+      els.forEach((el) => el.classList.add("is-in"));
+      return;
+    }
 
-      const mm = gsap.matchMedia();
-
-      mm.add(MOTION_OK, () => {
-        const targets: Element[] | Element =
-          stagger > 0 ? Array.from(el.children) : el;
-
-        gsap.set(el, { autoAlpha: 1 });
-
-        if (mode === "unmask") {
-          gsap.from(targets, {
-            clipPath: "inset(100% 0% 0% 0%)",
-            scale: 1.06,
-            duration: 1.4,
-            ease: "power3.out",
-            delay,
-            stagger,
-            scrollTrigger: { trigger: el, start, once: true },
-          });
-        } else {
-          gsap.from(targets, {
-            y: 34,
-            opacity: 0,
-            duration: 1.1,
-            ease: "power3.out",
-            delay,
-            stagger,
-            scrollTrigger: { trigger: el, start, once: true },
-          });
+    const io = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (!entry.isIntersecting) continue;
+          const el = entry.target as HTMLElement;
+          const delay = el.dataset.revealDelay;
+          if (delay) el.style.transitionDelay = `${delay}ms`;
+          el.classList.add("is-in");
+          io.unobserve(el);
         }
-      });
+      },
+      { rootMargin: "0px 0px -10% 0px", threshold: 0.04 }
+    );
 
-      mm.add("(prefers-reduced-motion: reduce)", () => {
-        gsap.set(el, { autoAlpha: 1 });
-      });
+    els.forEach((el) => io.observe(el));
+    return () => io.disconnect();
+  }, []);
 
-      return () => mm.revert();
-    },
-    { scope: ref }
-  );
-
-  return (
-    <div ref={ref} className={`pre-reveal ${className}`}>
-      {children}
-    </div>
-  );
+  return null;
 }

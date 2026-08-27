@@ -1,52 +1,47 @@
 @import "tailwindcss";
 
 /* ==========================================================================
-   Sunbeam Records — design tokens
-   Warm, analog, print-inspired. No cool tones. No gradients as decoration.
+   Tails We Remember
+
+   Warm ivory, deep charcoal, one muted rose. Nothing else earns a colour.
+
+   Contrast was measured rather than guessed, and two values from the brief
+   had to move to clear WCAG AA — both noted below.
    ========================================================================== */
 
 @theme {
   /* Surfaces */
-  --color-paper: #f7f4ef;
-  --color-paper-deep: #efe9e0;
-  --color-paper-sleeve: #e4dacb;
+  --color-page: #f7f3ee; /* as briefed */
+  --color-raise: #f1ebe4; /* one step up, for the quietest banding */
 
   /* Ink */
-  --color-ink: #1f1b18;
-  --color-ink-soft: #4a423c;
-  /* 4.77:1 on paper-deep, 5.25:1 on paper — clears AA for the 11px eyebrows.
-     Deliberately NOT taken darker to also clear paper-sleeve (that needs
-     #655b52): the faintness is load-bearing for the editorial look, and the
-     sleeve has only two faint strings, which use ink-soft instead. */
-  --color-ink-faint: #6f645a;
+  --color-ink: #24211f; /* as briefed — 14.49:1 on page */
+  --color-body: #4a4540; /* 8.58:1 — long-form reading */
 
-  /* Accents.
-     clay is for DECORATION ONLY — rules, dots, marks, active states. It can
-     never sit under text in either direction: paper-on-clay and clay-on-paper
-     are both 3.52:1. Anything bearing text uses clay-deep (4.98:1 on paper,
-     4.98:1 under paper), and clay-press is the hover/active step down, which
-     has to go darker rather than lighter to stay compliant. */
-  --color-clay: #c4693d;
-  --color-clay-deep: #a5522c;
-  --color-clay-press: #8c4522;
-  --color-sage: #7d8a6f;
-  --color-brass: #b8945f;
+  /* The brief specified #77716b for secondary text. Measured, that is 4.36:1
+     on page and 4.07:1 on raise, so it fails AA for normal text on both.
+     Darkened just enough to clear it on the lighter of the two surfaces:
+     5.21:1 on page, 4.86:1 on raise. The faintness survives; the failure
+     doesn't. */
+  --color-muted: #6b655f;
 
-  /* Lines */
-  --color-rule: #d8cec0;
-  --color-rule-soft: #e6ded2;
+  /* Rose is DECORATION ONLY — rules, marks, the active state of a control.
+     At 3.20:1 it clears the 3:1 that applies to graphics and control
+     boundaries but not the 4.5:1 that text needs, in either direction.
+     Anything bearing or being text uses rose-deep (4.86:1), and rose-press
+     steps DOWN for hover so it can't drift back under AA. */
+  --color-rose: #a87f72;
+  --color-rose-deep: #8a6153;
+  --color-rose-press: #7d5548;
 
-  /* Motion — slow and confident. Nothing bouncy. */
-  --ease-sunbeam: cubic-bezier(0.22, 1, 0.36, 1);
-  --ease-sunbeam-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  /* Hairlines */
+  --color-line: #e4dcd3;
+  --color-line-soft: #ece5dd;
 
-  /* Layout */
-  --spacing-gutter: 1.5rem;
-}
+  --font-display: var(--font-cormorant);
+  --font-sans: var(--font-dm);
 
-@theme inline {
-  --font-display: var(--font-fraunces);
-  --font-sans: var(--font-instrument);
+  --ease-quiet: cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 /* ==========================================================================
@@ -55,52 +50,48 @@
 
 @layer base {
   html {
-    /* Lenis drives scrolling; native smooth would fight it */
-    scroll-behavior: auto;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    text-rendering: optimizeLegibility;
+    scroll-behavior: smooth;
+    /* clears the fixed header when jumping to a section */
+    scroll-padding-top: 6rem;
   }
 
   body {
-    background-color: var(--color-paper);
-    color: var(--color-ink-soft);
+    background-color: var(--color-page);
+    color: var(--color-body);
     font-family: var(--font-sans), ui-sans-serif, system-ui, sans-serif;
     font-size: 1.0625rem;
     line-height: 1.65;
     overflow-x: hidden;
   }
 
-  /* Headlines: large serif at REGULAR weight reads expensive. Bold reads cheap. */
   h1,
   h2,
-  h3,
-  h4 {
+  h3 {
     font-family: var(--font-display), ui-serif, Georgia, serif;
-    font-weight: 400;
+    font-weight: 300;
     color: var(--color-ink);
-    font-variation-settings: "SOFT" 25, "WONK" 1, "opsz" 120;
-    letter-spacing: -0.02em;
-    line-height: 1.02;
+    letter-spacing: -0.015em;
+    line-height: 1.08;
     text-wrap: pretty;
   }
 
   ::selection {
-    background-color: var(--color-clay);
-    color: var(--color-paper);
+    background-color: var(--color-rose-deep);
+    color: var(--color-page);
   }
 
   :focus-visible {
-    outline: 2px solid var(--focus-ring, var(--color-clay));
+    outline: 2px solid var(--focus-ring, var(--color-rose-deep));
     outline-offset: 3px;
     border-radius: 2px;
   }
 
-  /* Sections on ink or clay-deep flip the ring to paper. A clay ring on
-     clay-deep is 1.41:1 — the focus indicator was invisible on the closing
-     CTA, which is the one section where a keyboard user is about to buy. */
+  /* Sections on ink or rose-deep flip the ring to ivory. A rose ring on
+     rose-deep is 1.4:1 — invisible exactly where someone is about to buy. */
   .surface-dark {
-    --focus-ring: var(--color-paper);
+    --focus-ring: var(--color-page);
   }
 
   button,
@@ -108,151 +99,120 @@
     -webkit-tap-highlight-color: transparent;
   }
 
-  /* Lenis */
-  html.lenis,
-  html.lenis body {
-    height: auto;
-  }
-  .lenis.lenis-smooth {
-    scroll-behavior: auto !important;
-  }
-  .lenis.lenis-stopped {
-    overflow: hidden;
-  }
-  .lenis.lenis-smooth [data-lenis-prevent] {
-    overscroll-behavior: contain;
+  img {
+    -webkit-user-drag: none;
   }
 }
 
 /* ==========================================================================
-   Type scale — big editorial jumps
+   Type scale — few sizes, large jumps, generous line length limits
    ========================================================================== */
 
-@utility text-display {
-  font-size: clamp(2.75rem, 7vw, 6rem);
-  line-height: 0.98;
-  letter-spacing: -0.03em;
+@utility text-hero {
+  font-size: clamp(2.6rem, 7.2vw, 5.25rem);
+  line-height: 1.02;
+  letter-spacing: -0.022em;
 }
 
-@utility text-h2 {
-  font-size: clamp(2rem, 4vw, 3.25rem);
-  line-height: 1.04;
-  letter-spacing: -0.025em;
+@utility text-section {
+  font-size: clamp(2rem, 4.6vw, 3.25rem);
+  line-height: 1.1;
+  letter-spacing: -0.018em;
 }
 
-@utility text-h3 {
-  font-size: clamp(1.25rem, 1.6vw, 1.5rem);
-  line-height: 1.25;
-  letter-spacing: -0.01em;
+@utility text-sub {
+  font-size: clamp(1.3rem, 2.2vw, 1.75rem);
+  line-height: 1.28;
+  letter-spacing: -0.012em;
 }
 
 @utility text-lede {
-  font-size: clamp(1.0625rem, 1.35vw, 1.25rem);
-  line-height: 1.6;
-  max-width: 46ch;
+  font-size: clamp(1.0625rem, 1.25vw, 1.1875rem);
+  line-height: 1.7;
 }
 
-/* Uppercase letterspaced meta label — used for eyebrows and catalog numbers */
-@utility eyebrow {
+/* Small caps label. One instance per section at most. */
+@utility label {
   font-family: var(--font-sans), sans-serif;
   font-size: 0.6875rem;
   font-weight: 500;
-  letter-spacing: 0.16em;
+  letter-spacing: 0.18em;
   text-transform: uppercase;
-  color: var(--color-ink-faint);
+  color: var(--color-muted);
 }
 
 @utility measure {
-  max-width: 65ch;
-}
-
-/* Fraunces' quirk axes. Applied automatically to h1–h4; this is for anywhere
-   else the display face is used (blockquotes, pricing figures, the wordmark). */
-@utility wonk {
-  font-variation-settings: "SOFT" 25, "WONK" 1, "opsz" 120;
+  max-width: 34rem;
 }
 
 /* ==========================================================================
-   Print-shop details
+   Layout — one shell, 1140px, generous gutters
    ========================================================================== */
 
-/* Hairline divider */
-@utility rule-line {
-  border-top: 1px solid var(--color-rule);
-}
-
-/* Paper grain. This single detail does more anti-"AI site" work than
-   anything else in the system. Fixed overlay, multiply blend. */
-@utility grain-overlay {
-  position: fixed;
-  inset: 0;
-  z-index: 100;
-  pointer-events: none;
-  opacity: 0.38;
-  mix-blend-mode: multiply;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.82' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='220' height='220' filter='url(%23n)'/%3E%3C/svg%3E");
-  background-size: 220px 220px;
-}
-
-/* Masked line reveal — SplitText wraps lines in these */
-@utility line-mask {
-  overflow: clip;
-  display: block;
-}
-
-/* Elements that GSAP will reveal start hidden — but ONLY when JS is running.
-   The `js` class is set by a blocking inline script in <head>, so with JS
-   disabled (or if a chunk fails) every one of these stays visible instead of
-   leaving a blank page. */
-@layer base {
-  html.js .pre-reveal {
-    opacity: 0;
-    visibility: hidden;
-  }
-
-  /* SplitText line wrappers need to sit on their own line to clip correctly */
-  .split-line {
-    display: block;
-  }
-}
-
-/* Content shell */
 @utility shell {
   width: 100%;
-  max-width: 78rem;
+  max-width: 71.25rem;
   margin-inline: auto;
-  padding-inline: clamp(1.5rem, 4vw, 2.5rem);
+  padding-inline: clamp(1.5rem, 5vw, 3rem);
+}
+
+/* Section rhythm. Only two values, so vertical spacing stays predictable. */
+@utility band {
+  padding-block: clamp(5rem, 11vw, 9rem);
+}
+
+@utility band-tight {
+  padding-block: clamp(3.5rem, 7vw, 5.5rem);
 }
 
 /* ==========================================================================
-   Marquee
+   Reveal — the only animation on the site
    ========================================================================== */
 
-@keyframes marquee {
+@layer base {
+  /* Hidden only when JS is running, so the page is complete without it. */
+  html.js [data-reveal] {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+
+  html.js [data-reveal].is-in {
+    opacity: 1;
+    transform: none;
+    transition:
+      opacity 900ms var(--ease-quiet),
+      transform 900ms var(--ease-quiet);
+  }
+}
+
+/* Step entry in the Create flow. Neutralised by the reduced-motion block. */
+@keyframes step-in {
   from {
-    transform: translate3d(0, 0, 0);
+    opacity: 0;
+    transform: translateY(10px);
   }
   to {
-    transform: translate3d(-50%, 0, 0);
+    opacity: 1;
+    transform: none;
   }
 }
 
-@utility marquee-track {
-  animation: marquee linear infinite;
-  will-change: transform;
+@utility step-in {
+  animation: step-in 460ms var(--ease-quiet) both;
 }
 
-/* ==========================================================================
-   Reduced motion — hard stop
-   ========================================================================== */
-
 @media (prefers-reduced-motion: reduce) {
+  html.js [data-reveal] {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+  html {
+    scroll-behavior: auto;
+  }
   *,
   *::before,
   *::after {
     animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
-    scroll-behavior: auto !important;
   }
 }

@@ -10,23 +10,20 @@ import {
   useState,
   type ReactNode,
 } from "react";
-import type { Track } from "@/lib/data";
+import type { Song } from "@/lib/content";
 import { asset } from "@/lib/asset";
 
-type AudioState = {
-  current: Track | null;
+type State = {
+  current: Song | null;
   isPlaying: boolean;
   /** 0–1 */
   progress: number;
   duration: number;
-  /** Plays the track, or toggles it if it's already loaded. */
-  toggle: (track: Track) => void;
-  pause: () => void;
-  seek: (fraction: number) => void;
-  dismiss: () => void;
+  toggle: (song: Song) => void;
+  seek: (song: Song, fraction: number) => void;
 };
 
-const Ctx = createContext<AudioState | null>(null);
+const Ctx = createContext<State | null>(null);
 
 export function useAudio() {
   const ctx = useContext(Ctx);
@@ -37,16 +34,18 @@ export function useAudio() {
 /**
  * One shared <audio> element for the whole page.
  *
- * Single element means starting a second sample automatically stops the first —
- * no overlapping songs, no per-card state to reconcile. Progress is read on a
- * rAF loop rather than `timeupdate`, which only fires about four times a second
- * and makes the waveform playhead visibly stutter.
+ * A single element means starting a second song stops the first automatically —
+ * no overlapping playback and no per-player state to reconcile.
+ *
+ * Progress is read on a requestAnimationFrame loop rather than the `timeupdate`
+ * event, which only fires about four times a second and makes a waveform
+ * playhead visibly stutter.
  */
 export function AudioProvider({ children }: { children: ReactNode }) {
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const rafRef = useRef<number | null>(null);
 
-  const [current, setCurrent] = useState<Track | null>(null);
+  const [current, setCurrent] = useState<Song | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [progress, setProgress] = useState(0);
   const [duration, setDuration] = useState(0);
@@ -71,79 +70,65 @@ export function AudioProvider({ children }: { children: ReactNode }) {
     rafRef.current = requestAnimationFrame(tick);
   }, [stopLoop]);
 
+  const load = useCallback((song: Song) => {
+    const el = audioRef.current;
+    if (!el) return;
+    setCurrent(song);
+    setProgress(0);
+    setDuration(0);
+    // asset(): a raw DOM assignment bypasses Next's basePath rewriting, so the
+    // file would 404 anywhere the site isn't served from the domain root.
+    el.src = asset(song.src);
+    el.currentTime = 0;
+  }, []);
+
   const toggle = useCallback(
-    (track: Track) => {
+    (song: Song) => {
       const el = audioRef.current;
       if (!el) return;
 
-      const isSame = current?.id === track.id;
-
-      if (isSame) {
-        if (el.paused) {
-          void el.play().catch(() => setIsPlaying(false));
-        } else {
-          el.pause();
-        }
+      if (current?.id === song.id) {
+        if (el.paused) void el.play().catch(() => setIsPlaying(false));
+        else el.pause();
         return;
       }
 
-      setCurrent(track);
-      setProgress(0);
-      setDuration(0);
-      // asset() rather than track.src directly: this is a raw DOM assignment,
-      // so Next's basePath rewriting doesn't apply and the file would 404
-      // wherever the site isn't served from the domain root.
-      el.src = asset(track.src);
-      el.currentTime = 0;
-      void el.play().catch(() => {
-        // Missing file or a browser gesture rule — surface the player anyway
-        // so the UI stays truthful instead of silently doing nothing.
-        setIsPlaying(false);
-      });
+      load(song);
+      void el.play().catch(() => setIsPlaying(false));
     },
-    [current]
+    [current, load]
   );
 
-  const pause = useCallback(() => {
-    audioRef.current?.pause();
-  }, []);
+  const seek = useCallback(
+    (song: Song, fraction: number) => {
+      const el = audioRef.current;
+      if (!el) return;
+      const clamped = Math.min(1, Math.max(0, fraction));
 
-  const seek = useCallback((fraction: number) => {
-    const el = audioRef.current;
-    if (!el || !el.duration) return;
-    const clamped = Math.min(1, Math.max(0, fraction));
-    el.currentTime = clamped * el.duration;
-    setProgress(clamped);
-  }, []);
+      // Scrubbing a song that isn't loaded yet should start it there.
+      if (current?.id !== song.id) {
+        load(song);
+        const onReady = () => {
+          el.currentTime = clamped * (el.duration || 0);
+          void el.play().catch(() => setIsPlaying(false));
+          el.removeEventListener("loadedmetadata", onReady);
+        };
+        el.addEventListener("loadedmetadata", onReady);
+        return;
+      }
 
-  const dismiss = useCallback(() => {
-    const el = audioRef.current;
-    if (el) {
-      el.pause();
-      el.removeAttribute("src");
-      el.load();
-    }
-    stopLoop();
-    setCurrent(null);
-    setIsPlaying(false);
-    setProgress(0);
-    setDuration(0);
-  }, [stopLoop]);
+      if (!el.duration) return;
+      el.currentTime = clamped * el.duration;
+      setProgress(clamped);
+    },
+    [current, load]
+  );
 
   useEffect(() => stopLoop, [stopLoop]);
 
-  const value = useMemo<AudioState>(
-    () => ({
-      current,
-      isPlaying,
-      progress,
-      duration,
-      toggle,
-      pause,
-      seek,
-      dismiss,
-    }),
-    [current, isPlaying, progress, duration, toggle, pause, seek, dismiss]
+  const value = useMemo<State>(
+    () => ({ current, isPlaying, progress, duration, toggle, seek }),
+    [current, isPlaying, progress, duration, toggle, seek]
   );
 
   return (

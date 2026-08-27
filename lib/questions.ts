@@ -1,23 +1,23 @@
 /**
- * The intake questions.
+ * The Create flow.
  *
- * Order matters. Easy factual questions first to build momentum, the
- * emotionally heavy ones once someone is already invested, contact details
- * last. Question 6 ("the one thing they did") is the one that produces the
- * line people cry at, so it's required and it gets the most encouragement.
+ * Ten fields across eight steps, ordered so it feels like telling someone about
+ * your pet rather than completing a form: who they were first, then the
+ * memories, then the practical details last.
  *
- * Editing copy here should never require touching a component.
+ * Only three things are actually required — their name, one piece of memory, and
+ * an email to send the song to. Everything else can be skipped, because someone
+ * writing this two days after losing their dog should not be blocked by a
+ * validation error about music genre.
  */
 
 export type Step =
   | {
-      kind: "choice";
-      id: string;
+      kind: "name";
+      id: "opening";
       question: string;
       help?: string;
-      options: { value: string; label: string; note?: string }[];
-      required: boolean;
-      defaultValue?: string;
+      required: true;
     }
   | {
       kind: "short" | "long";
@@ -29,195 +29,117 @@ export type Step =
       maxLength?: number;
     }
   | {
-      kind: "contact";
+      kind: "choice";
       id: string;
       question: string;
       help?: string;
+      options: { value: string; label: string }[];
       required: boolean;
-    };
+    }
+  | { kind: "photos"; id: "photos"; question: string; help?: string; required: false }
+  | { kind: "contact"; id: "contact"; question: string; help?: string; required: true };
 
 export const STEPS: Step[] = [
   {
-    kind: "choice",
-    id: "tier",
-    question: "Which pressing would you like?",
-    help: "You can change your mind before you pay — nothing is charged yet.",
+    kind: "name",
+    id: "opening",
+    question: "Who are we writing about?",
+    help: "Their name, and whether they were a dog, a cat, or someone else entirely.",
     required: true,
-    defaultValue: "keepsake",
-    options: [
-      { value: "digital", label: "Digital", note: "$47 · the song and artwork" },
-      {
-        value: "keepsake",
-        label: "Keepsake",
-        note: "$97 · song, lyric video, private page",
-      },
-      {
-        value: "forever",
-        label: "Forever",
-        note: "$197 · everything, plus a printed sleeve",
-      },
-      {
-        value: "legacy",
-        label: "Legacy",
-        note: "$397 · a call, two songs, framed",
-      },
-    ],
+  },
+  {
+    kind: "long",
+    id: "about",
+    question: "Tell us about them.",
+    help: "However you'd describe them to someone who never got to meet them. There's no wrong length.",
+    placeholder:
+      "We got him at eight weeks and he never really stopped being a puppy. Terrible guard dog. Slept through a break-in.",
+    required: false,
+    maxLength: 900,
   },
   {
     kind: "short",
-    id: "name",
-    question: "What was their name?",
-    help: "And what you actually called them — the silly version counts, and it often ends up in the song.",
-    placeholder: "Biscuit. Mostly “Biscy” or “sir”.",
-    required: true,
-    maxLength: 120,
-  },
-  {
-    kind: "choice",
-    id: "species",
-    question: "Dog or cat?",
-    required: true,
-    options: [
-      { value: "dog", label: "Dog" },
-      { value: "cat", label: "Cat" },
-      { value: "other", label: "Someone else" },
-    ],
-  },
-  {
-    kind: "short",
-    id: "breed",
-    question: "What kind, and how old were they?",
-    help: "Rough is fine. “Golden retriever, thirteen” is plenty.",
-    placeholder: "Golden retriever, thirteen years",
+    id: "personality",
+    question: "What were they like?",
+    help: "A few words is plenty.",
+    placeholder: "Gentle, stubborn, always hungry",
     required: false,
     maxLength: 160,
   },
   {
     kind: "long",
-    id: "arrival",
-    question: "How did they come into your life?",
-    help: "The shelter, the box outside a shop, the friend who couldn't keep them. Beginnings make good opening lines.",
-    placeholder:
-      "We weren't going to get a dog that day. He was the last one there and he didn't bark once.",
-    required: false,
-    maxLength: 700,
-  },
-  {
-    kind: "short",
-    id: "personality",
-    question: "Three words for who they were.",
-    placeholder: "Gentle, stubborn, always hungry",
-    required: true,
-    maxLength: 120,
-  },
-  {
-    kind: "long",
-    id: "signature",
-    question: "What's the one thing they did that nobody else's pet did?",
-    help: "This is the most important question here. The habit, the noise, the spot they always ended up in. Be as specific and as small as you like — small is what makes it theirs.",
+    id: "memories",
+    question: "What do you never want to forget?",
+    help: "The habits, the spot they always sat, the thing they did that no other animal did. Small and specific is better than big and general — the small things are what end up in the song.",
     placeholder:
       "He never once slept in the bed we bought him. Always the laundry basket, right on the warm clothes.",
     required: true,
-    maxLength: 700,
-  },
-  {
-    kind: "short",
-    id: "place",
-    question: "Where did they love to be?",
-    placeholder: "The landing at four o'clock, when the sun came through",
-    required: false,
-    maxLength: 240,
+    maxLength: 900,
   },
   {
     kind: "long",
-    id: "moment",
-    question: "Is there a moment you replay?",
-    help: "It doesn't have to be a big one. The ordinary ones tend to land hardest.",
+    id: "include",
+    question: "Anything you'd like in the song?",
+    help: "A name to mention, a line you want in there, or something you'd rather we left out.",
     placeholder:
-      "Every single day he lost his mind at the mail truck. Eleven years. Never won once.",
+      "Please include my daughter Ellie — he was really her dog. And please don't mention the illness.",
     required: false,
-    maxLength: 700,
-  },
-  {
-    kind: "short",
-    id: "family",
-    question: "Who else was in their family?",
-    help: "Names we can put in the song — people and other animals.",
-    placeholder: "Me, my wife Danni, and their sister Olive",
-    required: false,
-    maxLength: 240,
-  },
-  {
-    kind: "long",
-    id: "message",
-    question: "What do you wish you could tell them?",
-    help: "You can write this to them rather than to us. Most people do.",
-    placeholder: "That we were the lucky ones. Not him.",
-    required: false,
-    maxLength: 700,
+    maxLength: 600,
   },
   {
     kind: "choice",
-    id: "genre",
-    question: "How should it sound?",
-    required: true,
-    defaultValue: "acoustic",
-    options: [
-      { value: "acoustic", label: "Gentle acoustic", note: "Guitar, warm, quiet" },
-      { value: "piano", label: "Piano ballad", note: "Slow and open" },
-      { value: "country", label: "Country", note: "Story-telling, a little brighter" },
-      { value: "soul", label: "Soul", note: "Fuller, with more voice in it" },
-      { value: "folk", label: "Indie folk", note: "Sparse, close, intimate" },
-    ],
-  },
-  {
-    kind: "choice",
-    id: "voice",
-    question: "Whose voice should sing it?",
-    required: true,
-    defaultValue: "either",
-    options: [
-      { value: "female", label: "A woman" },
-      { value: "male", label: "A man" },
-      { value: "either", label: "Whichever suits it" },
-    ],
-  },
-  {
-    kind: "long",
-    id: "avoid",
-    question: "Anything we should leave out?",
-    help: "How they died, a name that would sting, a detail you'd rather not hear sung. We'll avoid it.",
-    placeholder: "Please don't mention the illness.",
+    id: "style",
+    question: "How would you like it to sound?",
+    help: "Optional. If you're not sure, we'll choose something gentle.",
     required: false,
-    maxLength: 500,
+    options: [
+      { value: "acoustic", label: "Gentle acoustic" },
+      { value: "piano", label: "Piano" },
+      { value: "folk", label: "Soft folk" },
+      { value: "country", label: "Country" },
+      { value: "unsure", label: "You choose" },
+    ],
+  },
+  {
+    kind: "photos",
+    id: "photos",
+    question: "Do you have photos of them?",
+    help: "Optional, and you can always send them later — we'll ask again in our reply.",
+    required: false,
   },
   {
     kind: "contact",
     id: "contact",
-    question: "Where should we send it?",
-    help: "We'll email you when it's ready — usually inside 48 hours — and ask for photos then.",
+    question: "Where should we send their song?",
+    help: "We'll be in touch within 48 hours. Nothing is charged yet.",
     required: true,
   },
 ];
 
-export const TOTAL_STEPS = STEPS.length;
+export const TOTAL = STEPS.length;
 
-/** Human-readable labels for the summary email. */
 export const LABELS: Record<string, string> = {
-  tier: "Pressing",
-  name: "Their name",
+  petName: "Their name",
   species: "Dog or cat",
-  breed: "Kind and age",
-  arrival: "How they arrived",
-  personality: "Three words",
-  signature: "The one thing they did",
-  place: "Where they loved to be",
-  moment: "A moment they replay",
-  family: "Their family",
-  message: "What they'd tell them",
-  genre: "Sound",
-  voice: "Voice",
-  avoid: "Leave out",
+  about: "About them",
+  personality: "What they were like",
+  memories: "Never want to forget",
+  include: "To include or avoid",
+  style: "Preferred sound",
+  photoNames: "Photos attached",
   yourName: "Your name",
   email: "Email",
 };
+
+export const SUMMARY_ORDER = [
+  "petName",
+  "species",
+  "about",
+  "personality",
+  "memories",
+  "include",
+  "style",
+  "photoNames",
+  "yourName",
+  "email",
+];

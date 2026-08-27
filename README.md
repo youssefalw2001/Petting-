@@ -1,78 +1,81 @@
 # Tails We Remember
 
-Marketing site for a pet tribute song service — an original song about someone's
-dog or cat, written from their memories and delivered in 48 hours.
+A personalised song made from the memories of someone's pet.
 
-The whole design is built on one idea: **it's a record label, not a SaaS product.**
-Record sleeves, centre labels, catalogue numbers, Side A. That framing is what
-makes the printed keepsake tier make sense, and it's why nothing here looks
-machine-generated.
+One page, eight sections, three dependencies. The design brief was "less" — this
+is the result of taking that literally.
 
 ## Stack
 
 | | |
 |---|---|
 | Framework | Next.js 16 (App Router) · React 19 · TypeScript |
-| Styling | Tailwind v4, CSS-first `@theme` with fully custom tokens |
-| Animation | GSAP 3 + `@gsap/react` · ScrollTrigger · SplitText |
-| Smooth scroll | [Lenis](https://github.com/darkroomengineering/lenis) |
-| Fonts | Fraunces + Instrument Sans, self-hosted via `next/font` |
-| Components | Hand-built. No component library — see below. |
+| Styling | Tailwind v4, CSS-first `@theme` |
+| Fonts | Cormorant Garamond + DM Sans, self-hosted via `next/font` |
+| Animation | ~40 lines of IntersectionObserver |
+| Dependencies | `next`, `react`, `react-dom`. That's all. |
 
 ```bash
 npm install
-npm run dev     # http://localhost:3000
-npm run build
+npm run dev      # http://localhost:3000
+npm run build    # static export to out/
 ```
 
-## Design rules
+`next start` does **not** work — `output: "export"` means there's no server.
+Serve `out/` instead.
 
-Deliberate constraints, not preferences. AI-built sites converge on the same
-visual defaults, and users read that as untrustworthy before they read a word.
+## Design system
 
-**Never:** purple/indigo gradients · Inter · glassmorphism · glowing borders ·
-bento grids · emoji icons · dark mode with neon · pure `#000`/`#FFF` ·
-`rounded-2xl` everywhere · shadcn/Aceternity/Magic UI components.
+Everything lives in `@theme` in `app/globals.css`. Change it there and the site
+follows.
 
-**Always:** warm paper base · ink-brown text · one clay accent · editorial serif
-display at **weight 400** (bold reads cheap) · asymmetric layout · visible SVG
-paper grain · hairline rules · 2–4px corner radius.
+**Colour.** Warm ivory `#F7F3EE`, deep charcoal `#24211F`, one muted rose.
+Contrast was measured, not guessed, and two values from the brief had to move:
 
-Palette and type live in `app/globals.css` under `@theme`. Change them there and
-the whole site follows.
+- Secondary text was specified as `#77716B`. Measured, that's **4.36:1** on the
+  page background and 4.07:1 on the raised surface — it fails AA for normal text
+  on both. Darkened to `#6B655F`, which clears it on both (5.21:1 / 4.86:1). The
+  faintness survives; the failure doesn't.
+- Rose `#A87F72` is **decoration only** — rules, marks, the active state of a
+  control. At 3.20:1 it clears the 3:1 that applies to graphics but not the 4.5:1
+  text needs, in either direction. Anything bearing or being text uses
+  `rose-deep` (4.86:1), and `rose-press` steps *down* for hover so it can't drift
+  back under AA.
+- `.surface-dark` flips the focus ring to ivory. A rose ring on the ink closing
+  section is 1.4:1 — invisible exactly where a keyboard user is about to buy.
+
+**Type.** Cormorant Garamond at weight 300 for headlines; large serif at light
+weight reads expensive where bold reads cheap. DM Sans for everything else — the
+brief offered Inter, and DM Sans is on the same list, slightly warmer, and avoids
+the single most recognisable typeface of generated landing pages.
+
+**Spacing.** One shell at 1140px, two section rhythms (`band`, `band-tight`), four
+type sizes. Fewer choices means the page can't drift.
 
 ## Motion
 
-Durations 0.8–1.4s, `power3.out`. **Nothing bouncy or elastic** — playful easing
-is the wrong emotional register for a grief product.
+One effect: a gentle rise-and-fade as each block enters view. `[data-reveal]`
+plus one IntersectionObserver mounted in the layout.
 
-Every animation is wrapped in `gsap.matchMedia()` with a
-`prefers-reduced-motion` branch, and only `transform`/`opacity` are animated.
-Pinning-style effects and the follower cursor are desktop-only, since both cost
-frames on a phone for no benefit.
+This replaced GSAP, ScrollTrigger, SplitText and Lenis. A memorial page doesn't
+need scroll-jacking or split-text choreography — it needs to load fast and sit
+still. Removing all four cut three dependencies and every infinite animation
+from the page (verified: `document.getAnimations()` returns zero looping).
 
-- `SplitReveal` — masked line-by-line headline reveals. Uses `autoSplit` so lines
-  re-split when webfonts land instead of breaking in the wrong place.
-- `ScrubWaveform` — a waveform that fills as you scroll. Two stacked SVGs with the
-  clay layer's `clip-path` scrubbed, so there are zero React re-renders.
-- `MiniPlayer` — docks on first play and persists. A conversion feature: nobody
-  buys a song they stopped hearing while scrolling to the pricing.
-- `HowItWorks` — native `position: sticky`, not a ScrollTrigger pin. Pinning
-  injects a layout spacer that fights Lenis on resize and has to be switched off
-  on mobile anyway; sticky survives both and needs no refresh handling.
+The transition lives in CSS, so `prefers-reduced-motion` disables it with no
+JavaScript branch.
 
-Elements that GSAP reveals carry `.pre-reveal`, which only hides them when the
-`js` class is present on `<html>` (set by a blocking inline script in the head).
-With JS off, everything renders normally rather than leaving a blank page.
+## The Create flow
 
-## The order flow
+`/create` — ten fields across eight steps, declared in `lib/questions.ts`.
+Ordered so it feels like telling someone about your pet: who they were, then the
+memories, then the practical details.
 
-`/order` is a fifteen-step intake — one question per screen, defined entirely in
-`lib/questions.ts`. Editing a question, its help text or its options should never
-require touching a component.
+Only three things are required — their name, one memory, and an email. Someone
+writing this two days after losing their dog shouldn't be blocked by a validation
+error about music genre.
 
-Because this is a static export there's no server to receive a submission, so it
-posts straight from the browser:
+Static export means no server, so it posts from the browser:
 
 ```bash
 # .env.local
@@ -80,52 +83,54 @@ NEXT_PUBLIC_FORM_ENDPOINT=https://api.web3forms.com/submit
 NEXT_PUBLIC_WEB3FORMS_KEY=your-access-key
 ```
 
-Formspree works the same way — just set the endpoint. **With no endpoint
-configured the flow still works**: it falls back to a formatted summary with a
-copy button and a mailto link, so nobody's answers are ever lost to a missing
-env var or a failed request.
+Photos post as multipart when files are chosen. Web3Forms' free tier doesn't
+accept attachments, which is why the confirmation also invites people to reply
+to the email with them.
 
-Question 7 — "the one thing they did that nobody else's pet did" — is the one
-that produces the line people cry at. It's required, and it gets the longest
-help text on purpose.
+**With no endpoint configured it still works** — it falls back to a formatted
+summary with a copy button and a mailto link. Nobody's answers are lost to a
+missing env var or a failed request.
 
 ## Before this goes live
 
-1. **Replace the testimonials.** `REACTIONS` in `lib/data.ts` is placeholder copy
-   and the site renders a visible warning while `REACTIONS_ARE_PLACEHOLDER` is
-   `true`. Publishing invented reviews breaks the FTC rule on consumer reviews and
-   testimonials, and it's the fastest way to lose a payment processor.
-2. **Swap in the real songs.** `public/samples/*.wav` are synthesised placeholders
-   from `scripts/make-placeholder-audio.py`. Drop in real MP3s, update `src` in
-   `lib/data.ts`, then delete the script and the WAVs.
-3. **Swap in real sleeve photography.** `public/placeholders/sleeve-*.svg` are
-   stand-ins. Real photos of real animals will do more for conversion than any
-   animation on this page.
-4. **Wire up checkout.** Every pricing `href` is `#`. Point them at Stripe Payment
-   Links — no backend needed to launch.
-5. **Point the intake form** at a Tally or Typeform using the thirteen questions
-   from the playbook.
-6. **Confirm commercial rights** on whatever tool generates the music. On Suno you
-   must be on a paid plan *at the time the song is created*; subscribing later does
-   not retroactively license anything you already made.
-7. Update `SITE` in `app/layout.tsx` and the email in `components/sections/Footer.tsx`.
+1. **Photography.** Every image in `public/photos` is a warm tonal stand-in, and
+   the site says so on each one. This is the single biggest gap between this and
+   finished. Replace the `src` values in `PHOTOS` (`lib/content.ts`), delete
+   `placeholder: true`, and the captions disappear. Look for one animal, quiet,
+   indoors, warm natural light — the kind of picture an owner actually has on
+   their phone. Real customer photos, with written permission, beat any stock.
+2. **Testimonials.** `TESTIMONIALS` are placeholders and the page renders a
+   visible build note while `TESTIMONIALS_ARE_PLACEHOLDER` is true. Invented
+   reviews break the FTC rule on consumer testimonials. The notice is
+   deliberately not hidden behind an env check — that would ship fabricated
+   quotes to production with nothing to warn you.
+3. **Songs.** `public/songs/*.wav` are generated demonstrations and the player
+   says so. Swap in real songs, update `src` and `length` in `lib/content.ts`,
+   and remove the note.
+4. **Price.** There is no pricing section — the brief asked for a memorial
+   experience, not a store. Nothing on the page states a price and nothing is
+   charged; the flow says so. Decide where price belongs before launch.
+5. **Payment.** No checkout. Wire Stripe Payment Links when you're ready.
+6. Update the address in `components/site/Footer.tsx` and `SITE` in
+   `app/layout.tsx`.
 
 ## Layout
 
 ```
 app/
-  layout.tsx        fonts, metadata, providers, grain
-  page.tsx          section order
-  globals.css       design tokens + custom utilities
+  layout.tsx        fonts, metadata, audio provider, reveal
+  page.tsx          the eight sections, in order
+  globals.css       every design token
+  create/page.tsx   the Create flow
 components/
-  audio/            AudioProvider (one shared <audio>), MiniPlayer
-  providers/        SmoothScroll (Lenis ⇄ ScrollTrigger sync)
-  sections/         the eleven page sections
-  ui/               Logo, Button, RecordSleeve, Waveform, SplitReveal, Reveal, …
+  site/             the page sections
+  audio/            one shared <audio>, waveform, two players
+  create/           the flow
+  ui/               Button, Photo, Logo, Reveal
 lib/
-  data.ts           all copy, pricing, FAQ, tracks
-  gsap.ts           single plugin registration point
-  waveform.ts       deterministic bar heights (SSR-safe)
+  content.ts        all copy, photography and songs
+  questions.ts      the Create flow, declaratively
 ```
 
-Content lives in `lib/data.ts`. Editing copy shouldn't mean touching components.
+Copy lives in `lib/content.ts`. Editing a sentence should never mean opening a
+component.

@@ -1,35 +1,38 @@
-import Nav from "@/components/sections/Nav";
-import Hero from "@/components/sections/Hero";
-import Listen from "@/components/sections/Listen";
-import HowItWorks from "@/components/sections/HowItWorks";
-import IntakeTease from "@/components/sections/IntakeTease";
-import AnswersToLyrics from "@/components/sections/AnswersToLyrics";
-import Reactions from "@/components/sections/Reactions";
-import Pricing from "@/components/sections/Pricing";
-import Reassurance from "@/components/sections/Reassurance";
-import FAQ from "@/components/sections/FAQ";
-import FinalCTA from "@/components/sections/FinalCTA";
-import Footer from "@/components/sections/Footer";
+import Nav from "@/components/site/Nav";
+import Hero from "@/components/site/Hero";
+import Opening from "@/components/site/Opening";
+import Receive from "@/components/site/Receive";
+import Examples from "@/components/site/Examples";
+import HowItWorks from "@/components/site/HowItWorks";
+import Personal from "@/components/site/Personal";
+import Testimonials from "@/components/site/Testimonials";
+import Closing from "@/components/site/Closing";
+import Footer from "@/components/site/Footer";
 
+/**
+ * One page, read top to bottom as a single story:
+ *
+ *   what this is → why it exists → what you receive → other people's →
+ *   how it happens → why it's yours → what people say → begin
+ *
+ * Eight sections. Anything that didn't help someone understand the product,
+ * trust it, feel something, or buy it isn't here.
+ */
 export default function Home() {
   return (
     <>
       <Nav />
       <main>
         <Hero />
-        <Listen />
+        <Opening />
+        <Receive />
+        <Examples />
         <HowItWorks />
-        <IntakeTease />
-        <AnswersToLyrics />
-        <Reactions />
-        <Pricing />
-        <Reassurance />
-        <FAQ />
-        <FinalCTA />
+        <Personal />
+        <Testimonials />
+        <Closing />
       </main>
       <Footer />
-      {/* Leaves room for the docked player so it never covers the footer links */}
-      <div className="h-24" aria-hidden="true" />
     </>
   );
 }

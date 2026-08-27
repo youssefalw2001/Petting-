@@ -1,0 +1,435 @@
+"use client";
+
+import { useCallback, useMemo, useRef, useState } from "react";
+import Link from "next/link";
+import { STEPS, TOTAL, LABELS, SUMMARY_ORDER, type Step } from "@/lib/questions";
+import { Button, TextLink } from "@/components/ui/Button";
+
+type Answers = Record<string, string>;
+
+const ENDPOINT = process.env.NEXT_PUBLIC_FORM_ENDPOINT ?? "";
+const WEB3FORMS_KEY = process.env.NEXT_PUBLIC_WEB3FORMS_KEY ?? "";
+
+function summarise(a: Answers) {
+  return SUMMARY_ORDER.filter((k) => a[k]?.trim())
+    .map((k) => `${LABELS[k] ?? k}:\n${a[k].trim()}`)
+    .join("\n\n");
+}
+
+export default function CreateFlow() {
+  const [i, setI] = useState(0);
+  const [a, setA] = useState<Answers>({});
+  const [files, setFiles] = useState<File[]>([]);
+  const [error, setError] = useState<string | null>(null);
+  const [state, setState] = useState<"filling" | "sending" | "done" | "manual">(
+    "filling"
+  );
+  const [copied, setCopied] = useState(false);
+  const fileInput = useRef<HTMLInputElement>(null);
+
+  const step = STEPS[i];
+  const last = i === TOTAL - 1;
+
+  const set = useCallback((k: string, v: string) => {
+    setA((p) => ({ ...p, [k]: v }));
+    setError(null);
+  }, []);
+
+  const missing = useMemo(() => {
+    if (!step.required) return false;
+    if (step.kind === "name")
+      return a.petName?.trim() ? false : "Just their name is enough to start.";
+    if (step.kind === "contact") {
+      if (!a.yourName?.trim()) return "And your name, so we know who to write to.";
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(a.email?.trim() ?? ""))
+        return "We'll need an email address that works.";
+      return false;
+    }
+    return a[step.id]?.trim() ? false : "Even one line helps.";
+  }, [step, a]);
+
+  const submit = useCallback(async () => {
+    const payload: Answers = {
+      ...a,
+      photoNames: files.length
+        ? files.map((f) => f.name).join(", ")
+        : "none — to follow by email",
+    };
+    payload.subject = `Song request — ${a.petName || "unnamed"}`;
+    payload.summary = summarise(payload);
+
+    if (!ENDPOINT) {
+      setA(payload);
+      setState("manual");
+      return;
+    }
+
+    setState("sending");
+    try {
+      let res: Response;
+
+      if (files.length) {
+        // Multipart so attachments can ride along where the endpoint supports
+        // them. Web3Forms' free tier does not, which is why the confirmation
+        // still asks for photos by reply.
+        const fd = new FormData();
+        Object.entries(payload).forEach(([k, v]) => fd.append(k, v));
+        if (WEB3FORMS_KEY) fd.append("access_key", WEB3FORMS_KEY);
+        files.forEach((f, n) => fd.append(`photo_${n + 1}`, f));
+        res = await fetch(ENDPOINT, { method: "POST", body: fd });
+      } else {
+        const body: Answers = { ...payload };
+        if (WEB3FORMS_KEY) body.access_key = WEB3FORMS_KEY;
+        res = await fetch(ENDPOINT, {
+          method: "POST",
+          headers: { "Content-Type": "application/json", Accept: "application/json" },
+          body: JSON.stringify(body),
+        });
+      }
+
+      if (!res.ok) throw new Error(String(res.status));
+      setA(payload);
+      setState("done");
+    } catch {
+      // Never lose what someone just wrote to a network error.
+      setA(payload);
+      setState("manual");
+    }
+  }, [a, files]);
+
+  const next = useCallback(() => {
+    if (missing) return setError(missing);
+    if (last) return void submit();
+    setI((n) => Math.min(n + 1, TOTAL - 1));
+  }, [missing, last, submit]);
+
+  /* ───────────────────────────── finished ───────────────────────────── */
+
+  if (state === "done" || state === "manual") {
+    return (
+      <div className="step-in mx-auto max-w-xl">
+        <h1 className="text-section font-light">
+          {state === "done"
+            ? `Thank you for telling us about ${a.petName || "them"}.`
+            : "One last step."}
+        </h1>
+
+        {state === "done" ? (
+          <>
+            <p className="mt-7 text-lede text-body">
+              A real person will read every word of that. We&rsquo;ll write to you
+              at <span className="text-ink">{a.email}</span> within 48 hours — and
+              if you haven&rsquo;t sent photos yet, you can simply reply to that
+              email with them.
+            </p>
+            <p className="mt-6 text-[0.9375rem] text-muted">
+              Nothing has been charged.
+            </p>
+          </>
+        ) : (
+          <>
+            <p className="mt-7 text-lede text-body">
+              Copy what you&rsquo;ve written and send it to us — that&rsquo;s
+              everything we need to begin.
+            </p>
+            <pre className="mt-8 max-h-72 overflow-auto whitespace-pre-wrap border border-line bg-raise p-5 text-[0.8125rem] leading-relaxed text-body">
+              {summarise(a)}
+            </pre>
+            <div className="mt-6 flex flex-wrap items-center gap-5">
+              <Button
+                onClick={() => {
+                  void navigator.clipboard
+                    ?.writeText(summarise(a))
+                    .then(() => setCopied(true))
+                    .catch(() => setCopied(false));
+                }}
+              >
+                {copied ? "Copied" : "Copy this"}
+              </Button>
+              <TextLink
+                href={`mailto:hello@tailsweremember.com?subject=${encodeURIComponent(
+                  `Song for ${a.petName || "my pet"}`
+                )}&body=${encodeURIComponent(summarise(a))}`}
+              >
+                Open my email instead
+              </TextLink>
+            </div>
+          </>
+        )}
+
+        <p className="mt-12">
+          <TextLink href="/">Return to the songs</TextLink>
+        </p>
+      </div>
+    );
+  }
+
+  /* ───────────────────────────── filling ───────────────────────────── */
+
+  return (
+    <div className="mx-auto max-w-xl">
+      {/* progress: one hairline, filling */}
+      <div className="flex items-center gap-4">
+        <div className="h-px flex-1 bg-line">
+          <div
+            className="h-px bg-rose-deep transition-[width] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]"
+            style={{ width: `${((i + 1) / TOTAL) * 100}%` }}
+          />
+        </div>
+        <span className="shrink-0 text-[0.6875rem] tabular-nums tracking-[0.16em] text-muted">
+          {i + 1} / {TOTAL}
+        </span>
+      </div>
+
+      <div key={i} className="step-in mt-14 min-h-[17rem]">
+        <h1 className="font-display text-[clamp(1.75rem,3.6vw,2.5rem)] font-light leading-[1.12] text-ink">
+          {step.question}
+        </h1>
+        {step.help && (
+          <p className="mt-4 max-w-lg text-[0.9375rem] leading-relaxed text-muted">
+            {step.help}
+          </p>
+        )}
+
+        <div className="mt-9">
+          <Field
+            step={step}
+            a={a}
+            set={set}
+            files={files}
+            setFiles={setFiles}
+            fileInput={fileInput}
+            onEnter={next}
+          />
+        </div>
+
+        {error && (
+          <p role="alert" className="mt-4 text-[0.875rem] text-rose-deep">
+            {error}
+          </p>
+        )}
+      </div>
+
+      <div className="mt-12 flex items-center justify-between gap-4 border-t border-line pt-7">
+        <button
+          onClick={() => {
+            setError(null);
+            setI((n) => Math.max(n - 1, 0));
+          }}
+          disabled={i === 0}
+          className="text-[0.9375rem] text-muted transition-colors duration-300 hover:text-ink disabled:invisible"
+        >
+          Back
+        </button>
+
+        <div className="flex items-center gap-6">
+          {!step.required && (
+            <button
+              onClick={() => setI((n) => Math.min(n + 1, TOTAL - 1))}
+              className="text-[0.9375rem] text-muted transition-colors duration-300 hover:text-ink"
+            >
+              Skip
+            </button>
+          )}
+          <Button onClick={next} disabled={state === "sending"}>
+            {state === "sending" ? "Sending…" : last ? "Send" : "Continue"}
+          </Button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ────────────────────────────── fields ────────────────────────────── */
+
+const line =
+  "w-full bg-transparent border-b border-line py-3 text-[1.125rem] text-ink " +
+  "outline-none transition-colors duration-300 placeholder:text-muted/55 " +
+  "focus:border-rose-deep";
+
+const box =
+  "w-full resize-none border border-line bg-raise px-4 py-3.5 text-[1.0625rem] " +
+  "leading-relaxed text-ink outline-none transition-colors duration-300 " +
+  "placeholder:text-muted/55 focus:border-rose-deep";
+
+function Field({
+  step,
+  a,
+  set,
+  files,
+  setFiles,
+  fileInput,
+  onEnter,
+}: {
+  step: Step;
+  a: Answers;
+  set: (k: string, v: string) => void;
+  files: File[];
+  setFiles: (f: File[]) => void;
+  fileInput: React.RefObject<HTMLInputElement | null>;
+  onEnter: () => void;
+}) {
+  if (step.kind === "name") {
+    const species = [
+      { value: "dog", label: "Dog" },
+      { value: "cat", label: "Cat" },
+      { value: "other", label: "Someone else" },
+    ];
+    return (
+      <div className="flex flex-col gap-8">
+        <input
+          autoFocus
+          value={a.petName ?? ""}
+          onChange={(e) => set("petName", e.target.value)}
+          onKeyDown={(e) => e.key === "Enter" && onEnter()}
+          placeholder="Their name"
+          className={line}
+          maxLength={80}
+        />
+        <div role="radiogroup" aria-label="Dog, cat, or someone else" className="flex flex-wrap gap-2.5">
+          {species.map((s) => {
+            const on = a.species === s.value;
+            return (
+              <button
+                key={s.value}
+                role="radio"
+                aria-checked={on}
+                onClick={() => set("species", s.value)}
+                className={[
+                  "rounded-[3px] border px-5 py-2.5 text-[0.9375rem] transition-colors duration-300",
+                  on
+                    ? "border-rose-deep bg-rose-deep text-page"
+                    : "border-line text-body hover:border-ink/40",
+                ].join(" ")}
+              >
+                {s.label}
+              </button>
+            );
+          })}
+        </div>
+      </div>
+    );
+  }
+
+  if (step.kind === "choice") {
+    return (
+      <div role="radiogroup" aria-label={step.question} className="flex flex-wrap gap-2.5">
+        {step.options.map((o) => {
+          const on = a[step.id] === o.value;
+          return (
+            <button
+              key={o.value}
+              role="radio"
+              aria-checked={on}
+              onClick={() => set(step.id, o.value)}
+              className={[
+                "rounded-[3px] border px-5 py-2.5 text-[0.9375rem] transition-colors duration-300",
+                on
+                  ? "border-rose-deep bg-rose-deep text-page"
+                  : "border-line text-body hover:border-ink/40",
+              ].join(" ")}
+            >
+              {o.label}
+            </button>
+          );
+        })}
+      </div>
+    );
+  }
+
+  if (step.kind === "photos") {
+    return (
+      <div>
+        <input
+          ref={fileInput}
+          type="file"
+          accept="image/*"
+          multiple
+          className="sr-only"
+          onChange={(e) => setFiles(Array.from(e.target.files ?? []).slice(0, 8))}
+        />
+        <button
+          onClick={() => fileInput.current?.click()}
+          className="w-full rounded-[3px] border border-dashed border-line px-5 py-9 text-[0.9375rem] text-muted transition-colors duration-300 hover:border-rose-deep hover:text-ink"
+        >
+          {files.length
+            ? `${files.length} photo${files.length > 1 ? "s" : ""} chosen`
+            : "Choose photos"}
+        </button>
+        {files.length > 0 && (
+          <ul className="mt-4 flex flex-col gap-1.5">
+            {files.map((f) => (
+              <li key={f.name} className="truncate text-[0.8125rem] text-muted">
+                {f.name}
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
+    );
+  }
+
+  if (step.kind === "contact") {
+    return (
+      <div className="flex flex-col gap-7">
+        <label className="block">
+          <span className="label">Your name</span>
+          <input
+            autoFocus
+            value={a.yourName ?? ""}
+            onChange={(e) => set("yourName", e.target.value)}
+            onKeyDown={(e) => e.key === "Enter" && onEnter()}
+            className={`${line} mt-2`}
+            placeholder="Danni"
+          />
+        </label>
+        <label className="block">
+          <span className="label">Email</span>
+          <input
+            type="email"
+            inputMode="email"
+            value={a.email ?? ""}
+            onChange={(e) => set("email", e.target.value)}
+            onKeyDown={(e) => e.key === "Enter" && onEnter()}
+            className={`${line} mt-2`}
+            placeholder="you@email.com"
+          />
+        </label>
+      </div>
+    );
+  }
+
+  if (step.kind === "long") {
+    const v = a[step.id] ?? "";
+    return (
+      <div>
+        <textarea
+          autoFocus
+          rows={6}
+          maxLength={step.maxLength}
+          value={v}
+          onChange={(e) => set(step.id, e.target.value)}
+          placeholder={step.placeholder}
+          className={box}
+        />
+        {step.maxLength && (
+          <p className="mt-2 text-right text-[0.75rem] tabular-nums text-muted/80">
+            {v.length} / {step.maxLength}
+          </p>
+        )}
+      </div>
+    );
+  }
+
+  return (
+    <input
+      autoFocus
+      value={a[step.id] ?? ""}
+      maxLength={step.maxLength}
+      onChange={(e) => set(step.id, e.target.value)}
+      onKeyDown={(e) => e.key === "Enter" && onEnter()}
+      placeholder={step.placeholder}
+      className={line}
+    />
+  );
+}
