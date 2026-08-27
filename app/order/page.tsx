@@ -20,7 +20,7 @@ export default function OrderPage() {
           </Link>
           <Link
             href="/"
-            className="text-[0.9375rem] text-ink-faint transition-colors duration-300 hover:text-clay"
+            className="text-[0.9375rem] text-ink-faint transition-colors duration-300 hover:text-clay-deep"
           >
             Leave
           </Link>

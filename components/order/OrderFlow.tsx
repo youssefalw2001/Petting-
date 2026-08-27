@@ -173,7 +173,7 @@ export default function OrderFlow() {
                   key={t}
                   className="flex items-start gap-3 text-[0.9375rem] text-ink-soft"
                 >
-                  <CheckIcon className="mt-[0.15em] size-4 shrink-0 text-clay" />
+                  <CheckIcon className="mt-[0.15em] size-4 shrink-0 text-clay-deep" />
                   {t}
                 </li>
               ))}
@@ -214,7 +214,7 @@ export default function OrderFlow() {
 
         <a
           href="/"
-          className="mt-10 inline-block text-[0.9375rem] text-clay underline decoration-clay/30 underline-offset-4"
+          className="mt-10 inline-block text-[0.9375rem] text-clay-deep underline decoration-clay-deep/40 underline-offset-4"
         >
           Back to the songs
         </a>
@@ -256,7 +256,7 @@ export default function OrderFlow() {
         </div>
 
         {error && (
-          <p role="alert" className="mt-4 text-[0.875rem] text-clay">
+          <p role="alert" className="mt-4 text-[0.875rem] text-clay-deep">
             {error}
           </p>
         )}
@@ -299,7 +299,7 @@ export default function OrderFlow() {
 const inputBase =
   "w-full bg-transparent text-ink placeholder:text-ink-faint/55 " +
   "border-b border-rule py-3 text-[1.0625rem] outline-none " +
-  "transition-colors duration-300 focus:border-clay";
+  "transition-colors duration-300 focus:border-clay-deep";
 
 function StepField({
   step,
@@ -345,7 +345,7 @@ function StepField({
               <span
                 className={[
                   "flex size-5 shrink-0 items-center justify-center rounded-full border transition-colors duration-300",
-                  active ? "border-clay bg-clay text-paper" : "border-rule",
+                  active ? "border-clay-deep bg-clay-deep text-paper" : "border-rule",
                 ].join(" ")}
               >
                 {active && <CheckIcon className="size-3" />}
@@ -398,7 +398,7 @@ function StepField({
           value={value}
           onChange={(e) => set(step.id, e.target.value)}
           placeholder={step.placeholder}
-          className="w-full resize-none rounded-[2px] border border-rule bg-paper-deep/50 px-4 py-3.5 text-[1.0625rem] leading-relaxed text-ink outline-none transition-colors duration-300 placeholder:text-ink-faint/55 focus:border-clay"
+          className="w-full resize-none rounded-[2px] border border-rule bg-paper-deep/50 px-4 py-3.5 text-[1.0625rem] leading-relaxed text-ink outline-none transition-colors duration-300 placeholder:text-ink-faint/55 focus:border-clay-deep"
         />
         {step.maxLength && (
           <p className="mt-2 text-right text-[0.75rem] tabular-nums text-ink-faint/70">

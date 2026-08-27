@@ -62,10 +62,7 @@ export default function AnswersToLyrics() {
     <section className="border-y border-rule bg-paper py-24 md:py-32">
       <div className="shell">
         <div className="max-w-2xl">
-          <p className="eyebrow flex items-center gap-3">
-            <span className="inline-block h-px w-8 bg-clay" />
-            From the form to the song
-          </p>
+          <p className="eyebrow">From the form to the song</p>
           <SplitReveal as="h2" className="mt-6 text-h2">
             We don&rsquo;t drop their name into a template.
           </SplitReveal>
@@ -108,7 +105,7 @@ export default function AnswersToLyrics() {
               {/* what it became */}
               <Reveal start="top 88%" delay={0.12}>
                 <div data-lyric>
-                  <p className="text-[0.625rem] font-medium uppercase tracking-[0.16em] text-clay">
+                  <p className="text-[0.625rem] font-medium uppercase tracking-[0.16em] text-clay-deep">
                     In the song
                   </p>
                   <blockquote
