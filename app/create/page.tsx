@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import CreateFlow from "@/components/create/CreateFlow";
-import { Wordmark } from "@/components/ui/Logo";
+import { Logo } from "@/components/ui/Logo";
 
 export const metadata: Metadata = {
   title: "Tell us about them · Tails We Remember",
@@ -15,11 +15,11 @@ export default function CreatePage() {
       <header className="border-b border-line">
         <div className="shell flex h-20 items-center justify-between">
           <Link href="/" aria-label="Tails We Remember, home">
-            <Wordmark />
+            <Logo />
           </Link>
           <Link
             href="/"
-            className="text-[0.9375rem] text-muted transition-colors duration-300 hover:text-ink"
+            className="text-[0.9375rem] text-low transition-colors duration-300 hover:text-hi"
           >
             Leave
           </Link>
@@ -31,7 +31,7 @@ export default function CreatePage() {
       </main>
 
       <footer className="shell pb-10">
-        <p className="mx-auto max-w-xl text-[0.8125rem] leading-relaxed text-muted">
+        <p className="mx-auto max-w-xl text-[0.8125rem] leading-relaxed text-low">
           Nothing is charged yet. What you write stays between us, and is never
           shared without your permission.
         </p>

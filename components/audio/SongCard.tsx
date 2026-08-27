@@ -6,15 +6,11 @@ import Photo from "@/components/ui/Photo";
 import { PHOTOS, type Song } from "@/lib/content";
 
 /**
- * A tall portrait photograph with the control sitting on it, and the name and
- * song title beneath.
+ * A tall portrait with the control on the image, name and title beneath.
  *
- * This replaced a row layout with an 88px thumbnail. At that size the animal was
- * a smudge, which defeated the entire point — the photographs are the emotional
- * argument, so they get to be large.
- *
- * A thin progress rule sits along the bottom edge of the image while it plays,
- * so the card doesn't need a waveform competing with the portrait.
+ * The photographs are the emotional argument, so they get to be large. An
+ * earlier version used 88px thumbnails in a row, at which size the animal was a
+ * smudge.
  */
 export default function SongCard({ song }: { song: Song }) {
   const { current, isPlaying, progress, toggle } = useAudio();
@@ -32,7 +28,7 @@ export default function SongCard({ song }: { song: Song }) {
             ? `Pause ${song.title}`
             : `Play ${song.title}, ${song.pet}'s song`
         }
-        className="group relative block w-full text-left"
+        className="group relative block w-full overflow-hidden rounded-[2px] text-left"
       >
         <Photo
           photo={PHOTOS[song.photo]}
@@ -40,33 +36,32 @@ export default function SongCard({ song }: { song: Song }) {
           ratio="4 / 5"
         />
 
-        {/* darkens a touch on hover so the control stays legible on any photo */}
-        <span className="pointer-events-none absolute inset-0 bg-ink/0 transition-colors duration-500 group-hover:bg-ink/10" />
+        {/* lifts slightly on hover so the control reads on any photograph */}
+        <span className="pointer-events-none absolute inset-0 bg-base/0 transition-colors duration-500 group-hover:bg-base/20" />
 
-        <span className="pointer-events-none absolute bottom-4 left-4 flex size-12 items-center justify-center rounded-full bg-page/92 text-ink backdrop-blur-sm transition-colors duration-300 group-hover:bg-page">
+        <span className="glow surface-amber pointer-events-none absolute bottom-4 left-4 flex size-11 items-center justify-center rounded-full bg-amber text-base">
           {playing ? (
-            <PauseIcon className="size-3.5" />
+            <PauseIcon className="size-3" />
           ) : (
-            <PlayIcon className="ml-0.5 size-3.5" />
+            <PlayIcon className="ml-0.5 size-3" />
           )}
         </span>
 
-        {/* progress along the base of the photograph */}
-        <span className="pointer-events-none absolute inset-x-0 bottom-0 h-[3px] bg-page/25">
+        <span className="pointer-events-none absolute inset-x-0 bottom-0 h-[2px] bg-hi/15">
           <span
-            className="block h-full bg-page"
+            className="block h-full bg-amber"
             style={{ width: `${pos * 100}%` }}
           />
         </span>
       </button>
 
-      <h3 className="mt-6 font-display text-[1.75rem] font-light leading-none text-ink">
+      <h3 className="mt-6 font-display text-[1.5rem] font-light leading-none text-hi">
         {song.pet}
       </h3>
-      <p className="mt-2 font-display text-[1.125rem] italic leading-snug text-body">
-        &ldquo;{song.title}&rdquo;
+      <p className="mt-2.5 text-[1.0625rem] font-light leading-snug text-amber">
+        {song.title}
       </p>
-      <p className="mt-3 text-[0.9375rem] leading-relaxed text-muted">
+      <p className="mt-3 text-[0.9375rem] leading-relaxed text-low">
         {song.line}
       </p>
     </article>

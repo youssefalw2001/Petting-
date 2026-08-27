@@ -1,28 +1,36 @@
 import type { Metadata } from "next";
-import { Cormorant_Garamond, DM_Sans } from "next/font/google";
+import { Sora, Manrope, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import { AudioProvider } from "@/components/audio/AudioProvider";
 import Reveal from "@/components/ui/Reveal";
 
 /**
- * Cormorant Garamond for headlines — high contrast, delicate, and at light
- * weight it carries emotion without tipping into decoration.
+ * Sora for headlines — geometric, modern, and at weight 300 with tight tracking
+ * it reads precise rather than technical. The elegant serif it replaced was
+ * beautiful but firmly traditional; this is the direction change.
  *
- * DM Sans for everything else. The brief offered Inter as an option; DM Sans is
- * on the same list and slightly warmer, and it avoids the single most
- * recognisable typeface of generated landing pages.
+ * Manrope for body: modern, slightly warm, and not Inter.
+ *
+ * JetBrains Mono for micro-labels, step numbers and timecodes. Monospace at
+ * small sizes is doing most of the work of making the page feel engineered.
  */
-const cormorant = Cormorant_Garamond({
+const sora = Sora({
   subsets: ["latin"],
-  weight: ["300", "400", "500"],
-  style: ["normal", "italic"],
-  variable: "--font-cormorant",
+  weight: ["200", "300", "400"],
+  variable: "--font-sora",
   display: "swap",
 });
 
-const dm = DM_Sans({
+const manrope = Manrope({
   subsets: ["latin"],
-  variable: "--font-dm",
+  variable: "--font-manrope",
+  display: "swap",
+});
+
+const mono = JetBrains_Mono({
+  subsets: ["latin"],
+  weight: ["400"],
+  variable: "--font-mono-jb",
   display: "swap",
 });
 
@@ -34,16 +42,16 @@ export const metadata: Metadata = {
   description:
     "A personalised song made from the memories, personality and moments you shared with your pet. Made from your memories. Kept forever.",
   openGraph: {
-    title: "A song for the one you'll always remember",
+    title: "Tails We Remember",
     description:
-      "A personalised song made from the memories, personality and moments you shared with your pet.",
+      "A personalised song made from the memories you shared with your pet.",
     url: SITE,
     siteName: "Tails We Remember",
     type: "website",
   },
   twitter: {
     card: "summary_large_image",
-    title: "A song for the one you'll always remember",
+    title: "Tails We Remember",
     description:
       "A personalised song made from the memories you shared with your pet.",
   },
@@ -51,11 +59,11 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang="en" className={`${cormorant.variable} ${dm.variable}`}>
+    <html
+      lang="en"
+      className={`${sora.variable} ${manrope.variable} ${mono.variable}`}
+    >
       <head>
-        {/* Blocking and pre-paint: marks JS as available so reveal targets can
-            start hidden. Without JS the class never lands and everything
-            renders normally. */}
         <script
           dangerouslySetInnerHTML={{
             __html: `document.documentElement.classList.add('js')`,

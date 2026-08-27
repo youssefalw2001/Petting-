@@ -6,29 +6,29 @@ import { asset } from "@/lib/asset";
 /**
  * Type, then one photograph edge to edge.
  *
- * The photograph is deliberately full-bleed and tall. The first version kept it
- * inside the 1140px shell with margins and a corner radius, and the result read
- * as a document rather than a place — the single biggest reason the page felt
- * plain. Letting one image run to both edges is most of the difference between
- * "minimal" and "empty".
- *
- * A soft ivory fade at the base carries the photograph into the page instead of
- * stopping it with a hard line.
+ * On a near-black page the photograph stops being a picture on paper and starts
+ * behaving like a light source, which is most of where the cinematic quality
+ * comes from. The fade at its base is now to the page black, so the image
+ * dissolves into the section beneath instead of stopping at a line.
  */
 export default function Hero() {
   return (
-    <section className="pt-32 sm:pt-36 md:pt-40">
+    <section className="pt-28 sm:pt-32 md:pt-36">
       <div className="shell">
-        <div className="mx-auto max-w-3xl text-center">
-          <h1 data-reveal className="text-hero font-light">
+        <div className="mx-auto max-w-5xl text-center">
+          <p data-reveal className="label">
+            In memory
+          </p>
+
+          <h1 data-reveal data-reveal-delay="60" className="mt-7 text-hero font-extralight">
             A song for the one
             <br className="hidden sm:block" /> you&rsquo;ll always remember.
           </h1>
 
           <p
             data-reveal
-            data-reveal-delay="90"
-            className="mx-auto mt-8 max-w-xl text-lede text-body"
+            data-reveal-delay="130"
+            className="mx-auto mt-8 max-w-xl text-lede text-mid"
           >
             A personalised song made from the memories, personality and moments
             you shared with your pet.
@@ -36,35 +36,32 @@ export default function Hero() {
 
           <div
             data-reveal
-            data-reveal-delay="180"
+            data-reveal-delay="210"
             className="mt-11 flex flex-col items-center gap-5"
           >
             <ButtonLink href="/create/">Create Their Song</ButtonLink>
-            <p className="text-[0.8125rem] tracking-[0.02em] text-muted">
-              Made from your memories. Kept forever.
-            </p>
+            <p className="label">Made from your memories · Kept forever</p>
           </div>
         </div>
       </div>
 
-      {/* full-bleed, no radius, no shell */}
       <div
         data-reveal
-        data-reveal-delay="120"
-        className="relative mt-12 h-[54vh] min-h-[20rem] w-full overflow-hidden md:mt-14 md:h-[64vh]"
+        data-reveal-delay="140"
+        className="relative mt-9 h-[56vh] min-h-[20rem] w-full overflow-hidden md:mt-10 md:h-[66vh]"
       >
-        {/* object-position tuned by eye rather than arithmetic: this keeps the
-            dog's eyes inside the visible band once the container crops the 8:5
-            image at desktop widths. */}
+        {/* object-position tuned by eye, so the dog's eyes stay inside the
+            visible band once the container crops the 8:5 image. */}
         <Image
           src={asset(PHOTOS.hero.src)}
           alt={PHOTOS.hero.alt}
           fill
           priority
           sizes="100vw"
-          className="object-cover object-[64%_58%]"
+          className="object-cover object-[64%_70%]"
         />
-        <div className="pointer-events-none absolute inset-x-0 bottom-0 h-28 bg-gradient-to-b from-transparent to-page" />
+        <div className="pointer-events-none absolute inset-x-0 bottom-0 h-40 bg-gradient-to-b from-transparent to-base" />
+        <div className="pointer-events-none absolute inset-x-0 top-0 h-24 bg-gradient-to-t from-transparent to-base" />
       </div>
     </section>
   );

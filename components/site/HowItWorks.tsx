@@ -12,14 +12,14 @@ export default function HowItWorks() {
           <h2 data-reveal className="text-section font-light">
             It&rsquo;s not just a song about a pet.
             <br className="hidden sm:block" />{" "}
-            <em className="font-display italic text-rose-deep">
+            <span className="text-amber">
               It&rsquo;s a song about yours.
-            </em>
+            </span>
           </h2>
           <p
             data-reveal
             data-reveal-delay="90"
-            className="mx-auto mt-7 max-w-lg text-lede text-body"
+            className="mx-auto mt-7 max-w-lg text-lede text-mid"
           >
             Written from what you tell us — {DETAILS.join(", ")}. The small
             things, mostly. They tend to be the ones that matter.
@@ -36,13 +36,13 @@ export default function HowItWorks() {
             >
               <span
                 aria-hidden="true"
-                className="font-display text-[1.75rem] font-light leading-none text-rose-deep"
+                className="mono text-[1.125rem] leading-none text-amber"
               >
                 {step.n}
               </span>
               <div>
                 <h3 className="font-display text-sub font-light">{step.title}</h3>
-                <p className="mt-3 max-w-md text-[1rem] leading-relaxed text-body">
+                <p className="mt-3 max-w-md text-[1rem] leading-relaxed text-mid">
                   {step.body}
                 </p>
               </div>

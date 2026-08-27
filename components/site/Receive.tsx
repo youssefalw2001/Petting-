@@ -12,7 +12,7 @@ import { FEATURED, PHOTOS } from "@/lib/content";
  */
 export default function Receive() {
   return (
-    <section className="border-y border-line bg-raise band">
+    <section className="border-y border-line bg-surface band">
       <div className="shell">
         <div className="mx-auto max-w-2xl text-center">
           <h2 data-reveal className="text-section font-light">
@@ -22,7 +22,7 @@ export default function Receive() {
           <p
             data-reveal
             data-reveal-delay="90"
-            className="mx-auto mt-7 max-w-lg text-lede text-body"
+            className="mx-auto mt-7 max-w-lg text-lede text-mid"
           >
             When a pet becomes part of your family, losing them leaves an empty
             space. We turn the memories you shared into an original song.
@@ -34,7 +34,8 @@ export default function Receive() {
             <Photo
               photo={PHOTOS[FEATURED.photo]}
               sizes="(max-width: 768px) 100vw, 520px"
-              ratio="4 / 5"
+              ratio="1 / 1"
+              className="rounded-[2px]"
             />
           </div>
           <div data-reveal data-reveal-delay="110">

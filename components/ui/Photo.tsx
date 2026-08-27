@@ -25,7 +25,7 @@ export default function Photo({
 }) {
   return (
     <div
-      className={`relative overflow-hidden bg-raise ${className}`}
+      className={`relative overflow-hidden bg-surface ${className}`}
       style={{ aspectRatio: ratio }}
     >
       <Image

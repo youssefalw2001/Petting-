@@ -11,7 +11,7 @@ is the result of taking that literally.
 |---|---|
 | Framework | Next.js 16 (App Router) · React 19 · TypeScript |
 | Styling | Tailwind v4, CSS-first `@theme` |
-| Fonts | Cormorant Garamond + DM Sans, self-hosted via `next/font` |
+| Fonts | Sora + Manrope + JetBrains Mono, self-hosted via `next/font` |
 | Animation | ~40 lines of IntersectionObserver |
 | Dependencies | `next`, `react`, `react-dom`. That's all. |
 
@@ -26,41 +26,52 @@ Serve `out/` instead.
 
 ## Design system
 
-Everything lives in `@theme` in `app/globals.css`. Change it there and the site
-follows.
+Everything lives in `@theme` in `app/globals.css`.
 
-**Colour.** Warm ivory `#F7F3EE`, deep charcoal `#24211F`, one muted rose.
-Contrast was measured, not guessed, and two values from the brief had to move:
+**Colour — near-black with one warm light.** The photographs are the only real
+colour on the page; against a deep background they behave like light sources
+rather than pictures pasted onto paper.
 
-- Secondary text was specified as `#77716B`. Measured, that's **4.36:1** on the
-  page background and 4.07:1 on the raised surface — it fails AA for normal text
-  on both. Darkened to `#6B655F`, which clears it on both (5.21:1 / 4.86:1). The
-  faintness survives; the failure doesn't.
-- Rose `#A87F72` is **decoration only** — rules, marks, the active state of a
-  control. At 3.20:1 it clears the 3:1 that applies to graphics but not the 4.5:1
-  text needs, in either direction. Anything bearing or being text uses
-  `rose-deep` (4.86:1), and `rose-press` steps *down* for hover so it can't drift
-  back under AA.
-- `.surface-dark` flips the focus ring to ivory. A rose ring on the ink closing
-  section is 1.4:1 — invisible exactly where a keyboard user is about to buy.
+| Token | Value | Measured |
+|---|---|---|
+| `base` | `#0B0C0E` | page |
+| `surface` | `#14161A` | raised bands |
+| `hi` | `#F2F3F5` | 17.62:1 |
+| `mid` | `#C9CED4` | 12.36:1 |
+| `low` | `#9BA1A9` | 7.51:1 |
+| `amber` | `#F0B27A` | 10.58:1 |
+| `line` / `edge` | `#1E2126` / `#2F343B` | decorative / control boundary |
 
-**Type.** Cormorant Garamond at weight 300 for headlines; large serif at light
-weight reads expensive where bold reads cheap. DM Sans for everything else — the
-brief offered Inter, and DM Sans is on the same list, slightly warmer, and avoids
-the single most recognisable typeface of generated landing pages.
+Going dark made the accent far more useful. On the previous ivory scheme the rose
+was 3.20:1 and could only ever be decoration; amber at 10.58:1 carries text,
+fills buttons, and marks the step numerals. `edge` exists separately from `line`
+because a control boundary needs 3:1 under 1.4.11 and a divider does not.
 
-**Spacing.** One shell at 1140px, two section rhythms (`band`, `band-tight`), four
-type sizes. Fewer choices means the page can't drift.
+Amber is warm on purpose. A memorial page wants candlelight, not a cool neon
+dashboard — and cool-neon-on-dark is also the single most recognisable
+generated-site look there is.
 
-**Texture.** A fixed film-grain layer at 20% opacity over the whole page. It is
-the cheapest thing that stops large flat ivory areas reading as blank screen
-rather than paper, and it ties the photographs to the background because they
-share the same texture. The first pass omitted it and the page read as plain.
+**Type.** Sora at weight 200–300 with tight tracking for headlines: geometric and
+precise rather than traditional. Manrope for body. **JetBrains Mono for
+micro-labels, step numerals and timecodes** — a monospaced letterspaced caption
+is doing most of the work of making the page feel engineered, and it costs
+nothing.
 
-**Photography carries the page.** The hero image is full-bleed and tall — inside
-the shell with margins and a corner radius it read as a document rather than a
-place. Examples are large portraits, not thumbnails; at 88px the animal was a
-smudge, which defeated the point.
+Sora ships no italic, so nothing on the site is italic. A synthesised slant looks
+broken at large sizes; weight and colour carry the emphasis instead.
+
+**Texture.** Fixed film grain at 5%, **screen**-blended. On a light page grain
+darkens; on a near-black one it has to lighten or it does nothing. Kept because
+deep flat fills band badly on cheap panels.
+
+**Light.** One radial amber bloom, behind the closing headline. The only gradient
+on the site, and it means something: a light left on.
+
+**Photography carries the page.** The hero runs full-bleed and tall, fading to
+the page black at top and bottom so it dissolves into the sections rather than
+stopping at a line. Examples are large portraits — at 88px an animal is a smudge.
+The featured photograph is square, because it is functionally cover art and
+because a 4:5 portrait left a dead block of background beside the player.
 
 ## Motion
 
@@ -109,6 +120,12 @@ missing env var or a failed request.
    everything toward the page ivory and lifts contrast so five photographs from
    five different rooms read as one brand instead of a stock-photo grid. One
    image needed harder desaturation because a blue sky fought the palette.
+
+   They are graded for a near-black page: saturation back, contrast pushed,
+   midpoint dropped so shadows join the background, warm highlight, and a
+   vignette so each photograph falls off into the page instead of ending at a
+   hard rectangle. `/projects/sandbox/regrade.py` does this. Grading is **not**
+   idempotent — always run it against a clean checkout of `public/photos`.
 
    Swap them for real customer photographs the moment you have written
    permission — that's the only thing that will beat these. Replace the `src`

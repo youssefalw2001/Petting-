@@ -12,7 +12,7 @@ export default function Examples() {
           <p
             data-reveal
             data-reveal-delay="90"
-            className="mx-auto mt-6 max-w-md text-lede text-body"
+            className="mx-auto mt-6 max-w-md text-lede text-mid"
           >
             Three of them, and the songs they became.
           </p>

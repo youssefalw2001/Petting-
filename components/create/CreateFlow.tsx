@@ -116,23 +116,23 @@ export default function CreateFlow() {
 
         {state === "done" ? (
           <>
-            <p className="mt-7 text-lede text-body">
+            <p className="mt-7 text-lede text-mid">
               A real person will read every word of that. We&rsquo;ll write to you
-              at <span className="text-ink">{a.email}</span> within 48 hours — and
+              at <span className="text-hi">{a.email}</span> within 48 hours — and
               if you haven&rsquo;t sent photos yet, you can simply reply to that
               email with them.
             </p>
-            <p className="mt-6 text-[0.9375rem] text-muted">
+            <p className="mt-6 text-[0.9375rem] text-low">
               Nothing has been charged.
             </p>
           </>
         ) : (
           <>
-            <p className="mt-7 text-lede text-body">
+            <p className="mt-7 text-lede text-mid">
               Copy what you&rsquo;ve written and send it to us — that&rsquo;s
               everything we need to begin.
             </p>
-            <pre className="mt-8 max-h-72 overflow-auto whitespace-pre-wrap border border-line bg-raise p-5 text-[0.8125rem] leading-relaxed text-body">
+            <pre className="mt-8 max-h-72 overflow-auto whitespace-pre-wrap border border-line bg-surface p-5 text-[0.8125rem] leading-relaxed text-mid">
               {summarise(a)}
             </pre>
             <div className="mt-6 flex flex-wrap items-center gap-5">
@@ -172,21 +172,21 @@ export default function CreateFlow() {
       <div className="flex items-center gap-4">
         <div className="h-px flex-1 bg-line">
           <div
-            className="h-px bg-rose-deep transition-[width] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]"
+            className="h-px bg-amber transition-[width] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]"
             style={{ width: `${((i + 1) / TOTAL) * 100}%` }}
           />
         </div>
-        <span className="shrink-0 text-[0.6875rem] tabular-nums tracking-[0.16em] text-muted">
+        <span className="shrink-0 text-[0.6875rem] tabular-nums tracking-[0.16em] text-low">
           {i + 1} / {TOTAL}
         </span>
       </div>
 
       <div key={i} className="step-in mt-14 min-h-[17rem]">
-        <h1 className="font-display text-[clamp(1.75rem,3.6vw,2.5rem)] font-light leading-[1.12] text-ink">
+        <h1 className="font-display text-[clamp(1.75rem,3.6vw,2.5rem)] font-light leading-[1.12] text-hi">
           {step.question}
         </h1>
         {step.help && (
-          <p className="mt-4 max-w-lg text-[0.9375rem] leading-relaxed text-muted">
+          <p className="mt-4 max-w-lg text-[0.9375rem] leading-relaxed text-low">
             {step.help}
           </p>
         )}
@@ -204,7 +204,7 @@ export default function CreateFlow() {
         </div>
 
         {error && (
-          <p role="alert" className="mt-4 text-[0.875rem] text-rose-deep">
+          <p role="alert" className="mt-4 text-[0.875rem] text-amber">
             {error}
           </p>
         )}
@@ -217,7 +217,7 @@ export default function CreateFlow() {
             setI((n) => Math.max(n - 1, 0));
           }}
           disabled={i === 0}
-          className="text-[0.9375rem] text-muted transition-colors duration-300 hover:text-ink disabled:invisible"
+          className="text-[0.9375rem] text-low transition-colors duration-300 hover:text-hi disabled:invisible"
         >
           Back
         </button>
@@ -226,7 +226,7 @@ export default function CreateFlow() {
           {!step.required && (
             <button
               onClick={() => setI((n) => Math.min(n + 1, TOTAL - 1))}
-              className="text-[0.9375rem] text-muted transition-colors duration-300 hover:text-ink"
+              className="text-[0.9375rem] text-low transition-colors duration-300 hover:text-hi"
             >
               Skip
             </button>
@@ -243,14 +243,14 @@ export default function CreateFlow() {
 /* ────────────────────────────── fields ────────────────────────────── */
 
 const line =
-  "w-full bg-transparent border-b border-line py-3 text-[1.125rem] text-ink " +
-  "outline-none transition-colors duration-300 placeholder:text-muted/55 " +
-  "focus:border-rose-deep";
+  "w-full bg-transparent border-b border-line py-3 text-[1.125rem] text-hi " +
+  "outline-none transition-colors duration-300 placeholder:text-low/55 " +
+  "focus:border-amber";
 
 const box =
-  "w-full resize-none border border-line bg-raise px-4 py-3.5 text-[1.0625rem] " +
-  "leading-relaxed text-ink outline-none transition-colors duration-300 " +
-  "placeholder:text-muted/55 focus:border-rose-deep";
+  "w-full resize-none border border-line bg-surface px-4 py-3.5 text-[1.0625rem] " +
+  "leading-relaxed text-hi outline-none transition-colors duration-300 " +
+  "placeholder:text-low/55 focus:border-amber";
 
 function Field({
   step,
@@ -298,8 +298,8 @@ function Field({
                 className={[
                   "rounded-[3px] border px-5 py-2.5 text-[0.9375rem] transition-colors duration-300",
                   on
-                    ? "border-rose-deep bg-rose-deep text-page"
-                    : "border-line text-body hover:border-ink/40",
+                    ? "border-amber bg-amber text-base"
+                    : "border-line text-mid hover:border-edge",
                 ].join(" ")}
               >
                 {s.label}
@@ -325,8 +325,8 @@ function Field({
               className={[
                 "rounded-[3px] border px-5 py-2.5 text-[0.9375rem] transition-colors duration-300",
                 on
-                  ? "border-rose-deep bg-rose-deep text-page"
-                  : "border-line text-body hover:border-ink/40",
+                  ? "border-amber bg-amber text-base"
+                  : "border-line text-mid hover:border-edge",
               ].join(" ")}
             >
               {o.label}
@@ -350,7 +350,7 @@ function Field({
         />
         <button
           onClick={() => fileInput.current?.click()}
-          className="w-full rounded-[3px] border border-dashed border-line px-5 py-9 text-[0.9375rem] text-muted transition-colors duration-300 hover:border-rose-deep hover:text-ink"
+          className="w-full rounded-[3px] border border-dashed border-line px-5 py-9 text-[0.9375rem] text-low transition-colors duration-300 hover:border-amber hover:text-hi"
         >
           {files.length
             ? `${files.length} photo${files.length > 1 ? "s" : ""} chosen`
@@ -359,7 +359,7 @@ function Field({
         {files.length > 0 && (
           <ul className="mt-4 flex flex-col gap-1.5">
             {files.map((f) => (
-              <li key={f.name} className="truncate text-[0.8125rem] text-muted">
+              <li key={f.name} className="truncate text-[0.8125rem] text-low">
                 {f.name}
               </li>
             ))}
@@ -413,7 +413,7 @@ function Field({
           className={box}
         />
         {step.maxLength && (
-          <p className="mt-2 text-right text-[0.75rem] tabular-nums text-muted/80">
+          <p className="mt-2 text-right text-[0.75rem] tabular-nums text-low/80">
             {v.length} / {step.maxLength}
           </p>
         )}

@@ -1,27 +1,40 @@
 import { ButtonLink } from "@/components/ui/Button";
+import { TailMark } from "@/components/ui/Logo";
 
-/** The natural end of the page. One line, one sentence, one button. */
+/**
+ * The end of the page: a single amber bloom behind the last line.
+ *
+ * The one gradient on the site, and it carries meaning rather than decoration —
+ * a light left on. Previously this section inverted to a light background, which
+ * on a dark page would have been a jarring slab of white right before the footer.
+ */
 export default function Closing() {
   return (
-    <section className="surface-dark bg-ink band text-page">
-      <div className="shell">
+    <section className="relative overflow-hidden border-t border-line band">
+      <div className="bloom" aria-hidden="true" />
+
+      <div className="shell relative">
         <div className="mx-auto max-w-2xl text-center">
-          <h2 data-reveal className="text-section font-light !text-page">
-            Their story deserves to be remembered.
+          <TailMark
+            data-reveal
+            className="mx-auto h-9 w-9 text-amber"
+          />
+
+          <h2 data-reveal data-reveal-delay="70" className="mt-9 text-section font-extralight">
+            Their story deserves
+            <br className="hidden sm:block" /> to be remembered.
           </h2>
 
           <p
             data-reveal
-            data-reveal-delay="90"
-            className="mx-auto mt-7 max-w-md text-lede text-page/75"
+            data-reveal-delay="140"
+            className="mx-auto mt-7 max-w-md text-lede text-mid"
           >
             Give their memories a melody you&rsquo;ll always have.
           </p>
 
-          <div data-reveal data-reveal-delay="170" className="mt-11">
-            <ButtonLink href="/create/" variant="onDark">
-              Create Their Song
-            </ButtonLink>
+          <div data-reveal data-reveal-delay="210" className="mt-11">
+            <ButtonLink href="/create/">Create Their Song</ButtonLink>
           </div>
         </div>
       </div>

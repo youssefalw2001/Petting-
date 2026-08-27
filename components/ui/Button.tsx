@@ -1,20 +1,22 @@
 import Link from "next/link";
 import type { ComponentPropsWithoutRef, ReactNode } from "react";
 
-type Variant = "solid" | "outline" | "onDark";
+type Variant = "solid" | "outline";
 
 const base =
-  "inline-flex items-center justify-center rounded-[3px] font-sans text-[0.9375rem] " +
-  "font-medium tracking-[0.01em] h-[3.25rem] px-8 " +
-  "transition-colors duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] " +
-  "disabled:pointer-events-none disabled:opacity-50";
+  "inline-flex items-center justify-center rounded-full font-sans text-[0.9375rem] " +
+  "font-medium tracking-[0.005em] h-[3.25rem] px-8 " +
+  "transition-[background-color,border-color,color,box-shadow] duration-300 " +
+  "ease-[cubic-bezier(0.22,1,0.36,1)] disabled:pointer-events-none disabled:opacity-50";
 
 const variants: Record<Variant, string> = {
-  // rose-deep, not rose: ivory on rose is 3.20:1 and this is the primary CTA.
-  // Hover steps DOWN to rose-press rather than up, which would fall under AA.
-  solid: "bg-rose-deep text-page hover:bg-rose-press",
-  outline: "border border-ink/20 text-ink hover:border-ink/50",
-  onDark: "bg-page text-ink hover:bg-page/90",
+  // Base text on amber is 10.58:1. Going dark made the accent usable as a
+  // filled control, which the previous rose never was.
+  solid:
+    "surface-amber bg-amber text-base hover:bg-amber-deep " +
+    "shadow-[0_0_30px_-10px_rgba(240,178,122,0.5)] hover:shadow-[0_0_40px_-8px_rgba(240,178,122,0.65)]",
+  // edge, not line: a control boundary needs 3:1 under 1.4.11.
+  outline: "border border-edge text-hi hover:border-amber hover:text-amber",
 };
 
 function cls(v: Variant, extra: string) {
@@ -66,7 +68,7 @@ export function ButtonLink({
   );
 }
 
-/** Quiet underlined text link — the only secondary action style on the site. */
+/** Quiet underlined text link — the only secondary action style. */
 export function TextLink({
   href,
   children,
@@ -77,9 +79,8 @@ export function TextLink({
   className?: string;
 }) {
   const c =
-    "text-[0.9375rem] text-rose-deep underline decoration-rose-deep/35 " +
-    "decoration-1 underline-offset-4 transition-colors duration-300 " +
-    `hover:decoration-rose-deep ${className}`;
+    "text-[0.9375rem] text-amber underline decoration-amber/40 decoration-1 " +
+    `underline-offset-4 transition-colors duration-300 hover:decoration-amber ${className}`;
   const internal = href.startsWith("/") && !href.startsWith("//");
 
   return internal ? (
