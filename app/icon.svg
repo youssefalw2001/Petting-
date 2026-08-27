@@ -1,20 +1,7 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="48" height="48">
-  <rect width="48" height="48" rx="8" fill="#F7F4EF" />
-  <g stroke="#C4693D" stroke-width="1.8" stroke-linecap="round">
-    <line x1="24" y1="7.4" x2="24" y2="3.2" />
-    <line x1="32.3" y1="9.6" x2="34.4" y2="6" />
-    <line x1="38.4" y1="15.7" x2="42" y2="13.6" />
-    <line x1="40.6" y1="24" x2="44.8" y2="24" />
-    <line x1="38.4" y1="32.3" x2="42" y2="34.4" />
-    <line x1="32.3" y1="38.4" x2="34.4" y2="42" />
-    <line x1="24" y1="40.6" x2="24" y2="44.8" />
-    <line x1="15.7" y1="38.4" x2="13.6" y2="42" />
-    <line x1="9.6" y1="32.3" x2="6" y2="34.4" />
-    <line x1="7.4" y1="24" x2="3.2" y2="24" />
-    <line x1="9.6" y1="15.7" x2="6" y2="13.6" />
-    <line x1="15.7" y1="9.6" x2="13.6" y2="6" />
+  <circle cx="24" cy="24" r="24" fill="#C4693D" />
+  <g transform="translate(24 24) scale(0.66) translate(-24 -24)">
+    <path d="M15 42C15 30 15 18 21 11.5 26 6 33.5 8 33.5 15 33.5 20.5 28 22.5 25 19.5"
+          fill="none" stroke="#F7F4EF" stroke-width="5.6" stroke-linecap="round" />
   </g>
-  <circle cx="24" cy="24" r="13.1" fill="none" stroke="#C4693D" stroke-width="1.8" />
-  <circle cx="24" cy="24" r="8.4" fill="none" stroke="#C4693D" stroke-width="1" opacity="0.55" />
-  <circle cx="24" cy="24" r="2.4" fill="#C4693D" />
 </svg>

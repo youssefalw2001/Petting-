@@ -20,7 +20,7 @@ export default function FinalCTA() {
         <div className="shell relative">
           <div className="max-w-2xl">
             {/* full-strength paper: on clay-deep, paper/50 is 2.22:1 */}
-            <p className="eyebrow !text-paper">Sunbeam Records</p>
+            <p className="eyebrow !text-paper">Tails We Remember</p>
 
             <SplitReveal as="h2" className="mt-7 text-h2 !text-paper">
               Tell us about them. We&rsquo;ll take it from there.
@@ -38,7 +38,7 @@ export default function FinalCTA() {
             <Reveal delay={0.3} className="mt-10">
               <div className="flex flex-wrap items-center gap-3">
                 <ButtonLink
-                  href="#pricing"
+                  href="/order/"
                   size="lg"
                   className="!bg-paper !text-ink hover:!bg-paper/90"
                 >

@@ -16,15 +16,15 @@ export default function Footer() {
           </p>
 
           <a
-            href="mailto:hello@sunbeamrecords.com"
+            href="mailto:hello@tailsweremember.com"
             className="text-[0.9375rem] text-clay-deep underline decoration-clay-deep/40 decoration-1 underline-offset-4 transition-colors duration-300 hover:decoration-clay-deep"
           >
-            hello@sunbeamrecords.com
+            hello@tailsweremember.com
           </a>
 
           <div className="flex w-full flex-col items-center gap-4 border-t border-rule pt-8 sm:flex-row sm:justify-between">
             <p className="text-[0.75rem] uppercase tracking-[0.14em] text-ink-faint">
-              © {year} Sunbeam Records
+              © {year} Tails We Remember
             </p>
             <nav className="flex items-center gap-6 text-[0.75rem] uppercase tracking-[0.14em] text-ink-faint">
               <a

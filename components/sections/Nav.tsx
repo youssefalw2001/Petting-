@@ -43,7 +43,7 @@ export default function Nav() {
       ].join(" ")}
     >
       <div className="shell flex h-[4.5rem] items-center justify-between">
-        <a href="#top" aria-label="Sunbeam Records, home">
+        <a href="#top" aria-label="Tails We Remember, home">
           <Wordmark />
         </a>
 
@@ -66,7 +66,7 @@ export default function Nav() {
           >
             Pricing
           </a>
-          <ButtonLink href="#pricing" className="ml-1.5">
+          <ButtonLink href="/order/" className="ml-1.5">
             Make their song
           </ButtonLink>
         </nav>

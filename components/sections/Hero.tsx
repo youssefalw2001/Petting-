@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import SplitReveal from "@/components/ui/SplitReveal";
 import Reveal from "@/components/ui/Reveal";
 import RecordSleeve from "@/components/ui/RecordSleeve";
@@ -56,12 +57,15 @@ export default function Hero() {
                 <ButtonLink href="#listen" size="lg">
                   Hear a song
                 </ButtonLink>
-                <a
-                  href="#pricing"
+                {/* Kept as a demoted text link, not a second button — but
+                    pointed at the order flow rather than the pricing anchor,
+                    and via next/link so basePath applies on Pages. */}
+                <Link
+                  href="/order/"
                   className="text-[0.9375rem] text-ink-soft underline decoration-rule decoration-1 underline-offset-4 transition-colors duration-300 hover:text-clay-deep hover:decoration-clay-deep"
                 >
                   Make their song — $97
-                </a>
+                </Link>
               </div>
             </Reveal>
           </div>

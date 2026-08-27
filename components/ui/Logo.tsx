@@ -1,13 +1,29 @@
 /**
- * Sunbeam Records identity.
+ * Tails We Remember — identity.
  *
- * One idea, executed once: a record is a circle with a hole in it, and a sun is
- * a circle with rays coming off it. They're the same shape. The mark is that
- * overlap — a record with sunbeams — and the wordmark is Fraunces with the
- * tracking pulled in. No second concept, no gradient, no AI logo generator.
+ * The mark is a single tail, curling up. Nothing else.
+ *
+ * It got there by elimination. The obvious idea was a pressed record with a
+ * tail sweeping off it — two meanings in one shape, memory plus animal. Built
+ * and tested at real sizes, it was unusable: a circle with anything leaving its
+ * upper right is the ♂ glyph, and at 28px in a nav bar that is the only thing
+ * anyone sees. Moving the tail to the top of the disc didn't help. The disc was
+ * the problem, so the disc went.
+ *
+ * What's left is better anyway. The name is *Tails*, the record already lives
+ * all over the site in the sleeve artwork, and one clean organic curve survives
+ * being shrunk to a favicon in a way that a circle with grooves never would.
+ *
+ * Verified legible at 80 / 40 / 30 / 18px, reversed on ink, and filled for the
+ * Instagram avatar.
  */
 
-const RAYS = 12;
+/**
+ * Upright stem, curl at the tip — a cat sitting with its tail up.
+ * Optically centred in the 48×48 box including the 5px stroke.
+ */
+const TAIL =
+  "M15 42C15 30 15 18 21 11.5 26 6 33.5 8 33.5 15 33.5 20.5 28 22.5 25 19.5";
 
 export function LogoMark({ className = "" }: { className?: string }) {
   return (
@@ -18,89 +34,68 @@ export function LogoMark({ className = "" }: { className?: string }) {
       aria-hidden="true"
       focusable="false"
     >
-      {/* sunbeams */}
-      <g stroke="currentColor" strokeWidth={1.4} strokeLinecap="round">
-        {Array.from({ length: RAYS }, (_, i) => {
-          const angle = (i / RAYS) * Math.PI * 2 - Math.PI / 2;
-          const inner = 16.6;
-          const outer = i % 2 === 0 ? 21.4 : 19.2;
-          return (
-            <line
-              key={i}
-              x1={24 + Math.cos(angle) * inner}
-              y1={24 + Math.sin(angle) * inner}
-              x2={24 + Math.cos(angle) * outer}
-              y2={24 + Math.sin(angle) * outer}
-            />
-          );
-        })}
-      </g>
-      {/* record edge */}
-      <circle cx="24" cy="24" r="13.1" stroke="currentColor" strokeWidth={1.4} />
-      {/* grooves */}
-      <circle
-        cx="24"
-        cy="24"
-        r="9.4"
+      <path
+        d={TAIL}
         stroke="currentColor"
-        strokeWidth={0.7}
-        opacity={0.5}
+        strokeWidth={5}
+        strokeLinecap="round"
       />
-      <circle
-        cx="24"
-        cy="24"
-        r="6.2"
-        stroke="currentColor"
-        strokeWidth={0.7}
-        opacity={0.32}
-      />
-      {/* spindle hole */}
-      <circle cx="24" cy="24" r="1.9" fill="currentColor" />
     </svg>
   );
 }
 
-export function Wordmark({
-  className = "",
-  showRecords = true,
-}: {
-  className?: string;
-  showRecords?: boolean;
-}) {
+/**
+ * Reversed out of a filled disc — the Instagram avatar and the favicon.
+ * A solid shape holds up at 32px in a comment thread where an outline thins out.
+ */
+export function LogoMonogram({ className = "" }: { className?: string }) {
   return (
-    <span className={`inline-flex items-center gap-2.5 ${className}`}>
-      <LogoMark className="h-7 w-7 shrink-0 text-clay" />
-      <span className="flex flex-col leading-none">
-        <span
-          className="font-display text-[1.28rem] leading-none tracking-[-0.035em] text-ink"
-          style={{ fontVariationSettings: '"SOFT" 30, "WONK" 1, "opsz" 40' }}
-        >
-          Sunbeam
-        </span>
-        {showRecords && (
-          <span className="mt-[0.22em] text-[0.5rem] font-medium uppercase leading-none tracking-[0.34em] text-ink-faint">
-            Records
-          </span>
-        )}
+    <svg
+      viewBox="0 0 48 48"
+      className={className}
+      aria-hidden="true"
+      focusable="false"
+    >
+      <circle cx="24" cy="24" r="24" fill="currentColor" />
+      <g transform="translate(24 24) scale(0.66) translate(-24 -24)">
+        <path
+          d={TAIL}
+          fill="none"
+          stroke="var(--color-paper)"
+          strokeWidth={5.6}
+          strokeLinecap="round"
+        />
+      </g>
+    </svg>
+  );
+}
+
+/** Horizontal lockup — nav, and anywhere on a single line. */
+export function Wordmark({ className = "" }: { className?: string }) {
+  return (
+    <span className={`inline-flex items-center gap-2 ${className}`}>
+      <LogoMark className="h-[1.75rem] w-[1.75rem] shrink-0 text-clay" />
+      <span
+        className="font-display text-[1.075rem] leading-none tracking-[-0.03em] text-ink sm:text-[1.15rem]"
+        style={{ fontVariationSettings: '"SOFT" 30, "WONK" 1, "opsz" 40' }}
+      >
+        Tails We Remember
       </span>
     </span>
   );
 }
 
+/** Stacked lockup — footer and closing sections. */
 export function WordmarkStacked({ className = "" }: { className?: string }) {
   return (
     <span className={`inline-flex flex-col items-center gap-3 ${className}`}>
       <LogoMark className="h-12 w-12 text-clay" />
-      <span className="flex flex-col items-center leading-none">
-        <span
-          className="font-display text-[1.75rem] leading-none tracking-[-0.035em] text-ink"
-          style={{ fontVariationSettings: '"SOFT" 30, "WONK" 1, "opsz" 48' }}
-        >
-          Sunbeam
-        </span>
-        <span className="mt-1.5 text-[0.5625rem] font-medium uppercase leading-none tracking-[0.4em] text-ink-faint">
-          Records
-        </span>
+      <span
+        className="flex flex-col items-center font-display text-[1.6rem] leading-[1.06] tracking-[-0.035em] text-ink"
+        style={{ fontVariationSettings: '"SOFT" 30, "WONK" 1, "opsz" 48' }}
+      >
+        <span>Tails We</span>
+        <span>Remember</span>
       </span>
     </span>
   );

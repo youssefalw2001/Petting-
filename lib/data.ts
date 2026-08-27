@@ -21,7 +21,7 @@ export const TRACKS: Track[] = [
   {
     id: "biscuit",
     petName: "Biscuit",
-    catalog: "SB–001",
+    catalog: "TWR–001",
     meta: "Golden Retriever · 2011–2024",
     genre: "Gentle acoustic",
     story:
@@ -34,7 +34,7 @@ export const TRACKS: Track[] = [
   {
     id: "olive",
     petName: "Olive",
-    catalog: "SB–002",
+    catalog: "TWR–002",
     meta: "Tabby · 2009–2025",
     genre: "Piano ballad",
     story:
@@ -47,7 +47,7 @@ export const TRACKS: Track[] = [
   {
     id: "tucker",
     petName: "Tucker",
-    catalog: "SB–003",
+    catalog: "TWR–003",
     meta: "Beagle mix · 2014–2025",
     genre: "Country",
     story:
@@ -110,7 +110,7 @@ export const TIERS: Tier[] = [
     id: "keepsake",
     name: "Keepsake",
     price: "$97",
-    catalog: "SB–100",
+    catalog: "TWR–100",
     summary: "The one most people pick. Song plus something to watch.",
     includes: [
       "Everything in Digital",
@@ -126,7 +126,7 @@ export const TIERS: Tier[] = [
     id: "forever",
     name: "Forever",
     price: "$197",
-    catalog: "SB–200",
+    catalog: "TWR–200",
     summary: "Something for the wall, not just the phone.",
     includes: [
       "Everything in Keepsake",
@@ -243,4 +243,57 @@ export const INTAKE_SAMPLE = [
   "The spot they always ended up in",
   "Who else was in their family",
   "What you'd tell them if you could",
+];
+
+
+/**
+ * The single most persuasive thing on the page: what somebody typed into the
+ * form, next to the line it became in the song.
+ *
+ * It answers the only real objection — "won't it just be generic with a name
+ * dropped in?" — without ever having to claim otherwise. Replace these with
+ * real pairs (with permission) as soon as you have them.
+ */
+export type Transformation = {
+  question: string;
+  answer: string;
+  lyric: string[];
+};
+
+export const TRANSFORMATIONS: Transformation[] = [
+  {
+    question: "The one thing they did that nobody else's pet did",
+    answer:
+      "He never once slept in the bed we bought him. Always the laundry basket, right on the warm clothes.",
+    lyric: [
+      "You never used the bed we bought,",
+      "found the warm clothes and called them yours.",
+    ],
+  },
+  {
+    question: "Where did they love to be?",
+    answer:
+      "The landing, about four o'clock, when the sun came through the window.",
+    lyric: [
+      "Four o'clock on the landing floor —",
+      "that little square of gold was yours.",
+    ],
+  },
+  {
+    question: "Is there a moment you replay?",
+    answer:
+      "He lost his mind at the mail truck every single day for eleven years. Never won once.",
+    lyric: [
+      "Eleven years of that mail truck war,",
+      "you never won and you never cared.",
+    ],
+  },
+  {
+    question: "What do you wish you could tell them?",
+    answer: "That we were the lucky ones. Not him.",
+    lyric: [
+      "They'll say we gave you a good life —",
+      "but we were the lucky ones.",
+    ],
+  },
 ];

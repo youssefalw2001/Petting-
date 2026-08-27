@@ -1,4 +1,4 @@
-# Sunbeam Records
+# Tails We Remember
 
 Marketing site for a pet tribute song service — an original song about someone's
 dog or cat, written from their memories and delivered in 48 hours.
@@ -64,6 +64,30 @@ frames on a phone for no benefit.
 Elements that GSAP reveals carry `.pre-reveal`, which only hides them when the
 `js` class is present on `<html>` (set by a blocking inline script in the head).
 With JS off, everything renders normally rather than leaving a blank page.
+
+## The order flow
+
+`/order` is a fifteen-step intake — one question per screen, defined entirely in
+`lib/questions.ts`. Editing a question, its help text or its options should never
+require touching a component.
+
+Because this is a static export there's no server to receive a submission, so it
+posts straight from the browser:
+
+```bash
+# .env.local
+NEXT_PUBLIC_FORM_ENDPOINT=https://api.web3forms.com/submit
+NEXT_PUBLIC_WEB3FORMS_KEY=your-access-key
+```
+
+Formspree works the same way — just set the endpoint. **With no endpoint
+configured the flow still works**: it falls back to a formatted summary with a
+copy button and a mailto link, so nobody's answers are ever lost to a missing
+env var or a failed request.
+
+Question 7 — "the one thing they did that nobody else's pet did" — is the one
+that produces the line people cry at. It's required, and it gets the longest
+help text on purpose.
 
 ## Before this goes live
 

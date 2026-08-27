@@ -89,7 +89,7 @@ export default function Pricing() {
                 </ul>
 
                 <ButtonLink
-                  href="#"
+                  href="/order/"
                   size="lg"
                   variant={tier.featured ? "primary" : "outline"}
                   className="mt-8 w-full"
@@ -114,7 +114,7 @@ export default function Pricing() {
                 isn&rsquo;t going to cover it.
               </p>
             </div>
-            <ButtonLink href="#" variant="outline" className="shrink-0">
+            <ButtonLink href="/order/" variant="outline" className="shrink-0">
               Enquire
             </ButtonLink>
           </div>

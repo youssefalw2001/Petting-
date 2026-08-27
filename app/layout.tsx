@@ -21,27 +21,27 @@ const instrument = Instrument_Sans({
   display: "swap",
 });
 
-const SITE = "https://sunbeamrecords.com";
+const SITE = "https://tailsweremember.com";
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE),
   title: {
-    default: "Sunbeam Records — Their story, turned into a song",
-    template: "%s · Sunbeam Records",
+    default: "Tails We Remember — Their story, turned into a song",
+    template: "%s · Tails We Remember",
   },
   description:
     "An original song about your dog or cat, written from your memories and delivered in 48 hours. One record, pressed for one family.",
   openGraph: {
-    title: "Sunbeam Records — Their story, turned into a song",
+    title: "Tails We Remember — Their story, turned into a song",
     description:
       "An original song about your dog or cat, written from your memories and delivered in 48 hours.",
     url: SITE,
-    siteName: "Sunbeam Records",
+    siteName: "Tails We Remember",
     type: "website",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Sunbeam Records — Their story, turned into a song",
+    title: "Tails We Remember — Their story, turned into a song",
     description:
       "An original song about your dog or cat, written from your memories and delivered in 48 hours.",
   },

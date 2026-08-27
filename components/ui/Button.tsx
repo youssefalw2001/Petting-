@@ -1,3 +1,4 @@
+import Link from "next/link";
 import type { ComponentPropsWithoutRef, ReactNode } from "react";
 
 type Variant = "primary" | "outline" | "quiet";
@@ -47,10 +48,19 @@ export function Button({
   );
 }
 
+/**
+ * Renders a `next/link` for internal routes and a plain anchor for hashes and
+ * external URLs.
+ *
+ * This matters more than it looks: a raw <a href="/order/"> ignores Next's
+ * `basePath`, so on GitHub Pages — where the site is served from a subpath —
+ * it would navigate to the wrong place. `next/link` applies the prefix for us.
+ */
 export function ButtonLink({
   variant = "primary",
   size = "md",
   className = "",
+  href = "#",
   children,
   ...rest
 }: ComponentPropsWithoutRef<"a"> & {
@@ -58,8 +68,19 @@ export function ButtonLink({
   size?: Size;
   children: ReactNode;
 }) {
+  const classes = classesFor(variant, size, className);
+  const isInternal = href.startsWith("/") && !href.startsWith("//");
+
+  if (isInternal) {
+    return (
+      <Link href={href} className={classes} {...rest}>
+        {children}
+      </Link>
+    );
+  }
+
   return (
-    <a className={classesFor(variant, size, className)} {...rest}>
+    <a href={href} className={classes} {...rest}>
       {children}
     </a>
   );

@@ -6,25 +6,23 @@
     </filter>
     <clipPath id="c2"><rect width="800" height="800" /></clipPath>
   </defs>
-
   <g clip-path="url(#c2)">
     <rect width="800" height="800" fill="#DFDCCB" />
 
-    <!-- window light: a warm rectangle of afternoon sun on the floor -->
-    <g opacity="0.9">
-      <path d="M188 96 L612 96 L688 704 L112 704 Z" fill="#D8A55F" opacity="0.32" />
-      <path d="M282 96 L518 96 L556 704 L244 704 Z" fill="#C4693D" opacity="0.2" />
-    </g>
+    <!-- a square of afternoon light on the floor -->
+    <path d="M188 96H612L688 704H112Z" fill="#D8A55F" opacity="0.34" />
+    <path d="M282 96H518L556 704H244Z" fill="#C4693D" opacity="0.22" />
 
     <!-- window frame -->
-    <g stroke="#7D8A6F" stroke-width="9" opacity="0.7">
+    <g stroke="#7D8A6F" stroke-width="9" opacity="0.65">
       <line x1="400" y1="96" x2="400" y2="704" />
-      <line x1="150" y1="400" x2="650" y2="400" />
+      <line x1="150" y1="392" x2="650" y2="392" />
     </g>
 
-    <!-- sun disc, high -->
-    <circle cx="400" cy="256" r="104" fill="#B8945F" opacity="0.55" />
-    <circle cx="400" cy="256" r="104" fill="none" stroke="#7D8A6F" stroke-width="4" opacity="0.6" />
+    <!-- curled tail, sitting in the light -->
+    <g fill="none" stroke="#1F1B18" stroke-width="30" stroke-linecap="round" opacity="0.3">
+      <path d="M352 640C352 520 352 392 420 316 480 250 574 276 574 352 574 416 506 442 468 404" />
+    </g>
 
     <rect width="800" height="800" filter="url(#g2)" opacity="0.14" style="mix-blend-mode:multiply" />
   </g>

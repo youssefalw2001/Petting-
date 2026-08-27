@@ -3,6 +3,7 @@ import Hero from "@/components/sections/Hero";
 import Listen from "@/components/sections/Listen";
 import HowItWorks from "@/components/sections/HowItWorks";
 import IntakeTease from "@/components/sections/IntakeTease";
+import AnswersToLyrics from "@/components/sections/AnswersToLyrics";
 import Reactions from "@/components/sections/Reactions";
 import Pricing from "@/components/sections/Pricing";
 import Reassurance from "@/components/sections/Reassurance";
@@ -19,6 +20,7 @@ export default function Home() {
         <Listen />
         <HowItWorks />
         <IntakeTease />
+        <AnswersToLyrics />
         <Reactions />
         <Pricing />
         <Reassurance />
