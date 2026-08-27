@@ -15,10 +15,13 @@ export default function Closing() {
 
       <div className="shell relative">
         <div className="mx-auto max-w-2xl text-center">
-          <TailMark
-            data-reveal
-            className="mx-auto h-9 w-9 text-amber"
-          />
+          {/* wrapper carries data-reveal: TailMark only forwards className, so
+              the attribute was being dropped and the mark never animated —
+              which is why it stayed visible while the rest of the section
+              didn't. */}
+          <span data-reveal className="block">
+            <TailMark className="mx-auto h-9 w-9 text-amber" />
+          </span>
 
           <h2 data-reveal data-reveal-delay="70" className="mt-9 text-section font-extralight">
             Their story deserves

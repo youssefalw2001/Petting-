@@ -3,16 +3,16 @@ import { Sora, Manrope, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import { AudioProvider } from "@/components/audio/AudioProvider";
 import Reveal from "@/components/ui/Reveal";
+import ScrollReset from "@/components/ui/ScrollReset";
 
 /**
- * Sora for headlines — geometric, modern, and at weight 300 with tight tracking
- * it reads precise rather than technical. The elegant serif it replaced was
- * beautiful but firmly traditional; this is the direction change.
+ * Sora for headlines — geometric, modern, and at weight 200–300 with tight
+ * tracking it reads precise rather than technical.
  *
  * Manrope for body: modern, slightly warm, and not Inter.
  *
  * JetBrains Mono for micro-labels, step numbers and timecodes. Monospace at
- * small sizes is doing most of the work of making the page feel engineered.
+ * small sizes does most of the work of making the page feel engineered.
  */
 const sora = Sora({
   subsets: ["latin"],
@@ -57,6 +57,17 @@ export const metadata: Metadata = {
   },
 };
 
+/**
+ * Blocking, and it has to be.
+ *
+ * `js` lets reveal targets start hidden without hiding them from anyone without
+ * JavaScript. `scrollRestoration = "manual"` must be set before the browser
+ * attempts to restore a scroll offset, which happens long before React
+ * hydrates — putting it in a component would be far too late.
+ */
+const BOOT = `document.documentElement.classList.add('js');
+if ('scrollRestoration' in history) history.scrollRestoration = 'manual';`;
+
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
@@ -64,15 +75,12 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       className={`${sora.variable} ${manrope.variable} ${mono.variable}`}
     >
       <head>
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `document.documentElement.classList.add('js')`,
-          }}
-        />
+        <script dangerouslySetInnerHTML={{ __html: BOOT }} />
       </head>
       <body>
         <AudioProvider>{children}</AudioProvider>
         <div className="grain" aria-hidden="true" />
+        <ScrollReset />
         <Reveal />
       </body>
     </html>
