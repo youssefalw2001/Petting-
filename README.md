@@ -2,7 +2,7 @@
 
 A personalised song made from the memories of someone's pet.
 
-One page, eight sections, three dependencies. The design brief was "less" — this
+One page, six sections, three dependencies. The design brief was "less" — this
 is the result of taking that literally.
 
 ## Stack
@@ -52,6 +52,16 @@ the single most recognisable typeface of generated landing pages.
 **Spacing.** One shell at 1140px, two section rhythms (`band`, `band-tight`), four
 type sizes. Fewer choices means the page can't drift.
 
+**Texture.** A fixed film-grain layer at 20% opacity over the whole page. It is
+the cheapest thing that stops large flat ivory areas reading as blank screen
+rather than paper, and it ties the photographs to the background because they
+share the same texture. The first pass omitted it and the page read as plain.
+
+**Photography carries the page.** The hero image is full-bleed and tall — inside
+the shell with margins and a corner radius it read as a document rather than a
+place. Examples are large portraits, not thumbnails; at 88px the animal was a
+smudge, which defeated the point.
+
 ## Motion
 
 One effect: a gentle rise-and-fade as each block enters view. `[data-reveal]`
@@ -93,12 +103,16 @@ missing env var or a failed request.
 
 ## Before this goes live
 
-1. **Photography.** Every image in `public/photos` is a warm tonal stand-in, and
-   the site says so on each one. This is the single biggest gap between this and
-   finished. Replace the `src` values in `PHOTOS` (`lib/content.ts`), delete
-   `placeholder: true`, and the captions disappear. Look for one animal, quiet,
-   indoors, warm natural light — the kind of picture an owner actually has on
-   their phone. Real customer photos, with written permission, beat any stock.
+1. **Photography.** The five photographs are CC0 (public domain) via Openverse —
+   no attribution obligation, safe commercially. They're cropped, resized and
+   graded by `/projects/sandbox/process.py`, which pulls saturation back, warms
+   everything toward the page ivory and lifts contrast so five photographs from
+   five different rooms read as one brand instead of a stock-photo grid. One
+   image needed harder desaturation because a blue sky fought the palette.
+
+   Swap them for real customer photographs the moment you have written
+   permission — that's the only thing that will beat these. Replace the `src`
+   values in `PHOTOS` (`lib/content.ts`); nothing else changes.
 2. **Testimonials.** `TESTIMONIALS` are placeholders and the page renders a
    visible build note while `TESTIMONIALS_ARE_PLACEHOLDER` is true. Invented
    reviews break the FTC rule on consumer testimonials. The notice is

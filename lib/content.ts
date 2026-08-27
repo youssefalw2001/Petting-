@@ -11,39 +11,26 @@
 export type Photo = {
   src: string;
   alt: string;
-  /** Warm tonal stand-in, not a photograph. Drives the caption treatment. */
-  placeholder?: boolean;
 };
 
 /**
- * Replace each `src` with a real photograph and delete `placeholder: true`.
+ * All CC0 (public domain) via Openverse — no attribution obligation, safe
+ * commercially. Cropped, resized and graded by scripts/../process.py so five
+ * photographs from five different rooms read as one brand rather than a
+ * stock-photo grid.
  *
- * What to look for: one animal, quiet, indoors, warm natural light — the sort of
- * picture an owner actually has on their phone. Nothing staged, nothing
- * advertising-bright, no props. A dog asleep in a patch of sun does more work
- * here than any professionally lit portrait.
- *
- * Unsplash and Pexels both licence free for commercial use. Better still: ask a
- * real customer for theirs, in writing, and use that.
+ * Swap these for real customer photographs the moment you have written
+ * permission. Nothing else needs to change.
  */
 export const PHOTOS: Record<string, Photo> = {
   hero: {
-    src: "/photos/hero.svg",
-    alt: "A dog resting against their owner in late afternoon light",
-    placeholder: true,
+    src: "/photos/hero.jpg",
+    alt: "A dog resting its head on the arm of a sofa, beside its owner",
   },
-  buddy: {
-    src: "/photos/buddy.svg",
-    alt: "Buddy, a golden retriever, asleep in a patch of sun",
-    placeholder: true,
-  },
-  milo: { src: "/photos/milo.svg", alt: "Milo waiting by the front door", placeholder: true },
-  luna: { src: "/photos/luna.svg", alt: "Luna, a tabby cat, on a windowsill", placeholder: true },
-  charlie: {
-    src: "/photos/charlie.svg",
-    alt: "Charlie curled at the end of a sofa",
-    placeholder: true,
-  },
+  buddy: { src: "/photos/buddy.jpg", alt: "Buddy, a black labrador, resting on a bed" },
+  milo: { src: "/photos/milo.jpg", alt: "Milo lying with his head on the ground, watching" },
+  luna: { src: "/photos/luna.jpg", alt: "Luna, a tabby cat, curled up asleep" },
+  charlie: { src: "/photos/charlie.jpg", alt: "Charlie wrapped in a soft blanket" },
 };
 
 /* ─────────────────────────────── songs ─────────────────────────────── */
@@ -169,11 +156,5 @@ export const TESTIMONIALS = [
       "My husband has played it every morning since it arrived. He has never once played the same thing twice.",
     name: "Placeholder",
     detail: "Buddy's family",
-  },
-  {
-    quote:
-      "It is three minutes long and it holds sixteen years. I don't know how else to say it.",
-    name: "Placeholder",
-    detail: "Charlie's dad",
   },
 ];

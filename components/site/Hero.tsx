@@ -1,16 +1,23 @@
-import Photo from "@/components/ui/Photo";
+import Image from "next/image";
 import { ButtonLink } from "@/components/ui/Button";
 import { PHOTOS } from "@/lib/content";
+import { asset } from "@/lib/asset";
 
 /**
- * Centred type, then one wide photograph. Nothing else.
+ * Type, then one photograph edge to edge.
  *
- * No statistics, no floating cards, no collage. The whole job of this screen is
- * to say what this is in about five seconds and then get out of the way.
+ * The photograph is deliberately full-bleed and tall. The first version kept it
+ * inside the 1140px shell with margins and a corner radius, and the result read
+ * as a document rather than a place — the single biggest reason the page felt
+ * plain. Letting one image run to both edges is most of the difference between
+ * "minimal" and "empty".
+ *
+ * A soft ivory fade at the base carries the photograph into the page instead of
+ * stopping it with a hard line.
  */
 export default function Hero() {
   return (
-    <section className="pb-4 pt-36 sm:pt-44 md:pb-8 md:pt-52">
+    <section className="pt-32 sm:pt-36 md:pt-40">
       <div className="shell">
         <div className="mx-auto max-w-3xl text-center">
           <h1 data-reveal className="text-hero font-light">
@@ -40,15 +47,24 @@ export default function Hero() {
         </div>
       </div>
 
-      <div className="shell mt-16 md:mt-24">
-        <div data-reveal data-reveal-delay="120">
-          <Photo
-            photo={PHOTOS.hero}
-            sizes="(max-width: 768px) 100vw, 1140px"
-            ratio="8 / 5"
-            priority
-          />
-        </div>
+      {/* full-bleed, no radius, no shell */}
+      <div
+        data-reveal
+        data-reveal-delay="120"
+        className="relative mt-12 h-[54vh] min-h-[20rem] w-full overflow-hidden md:mt-14 md:h-[64vh]"
+      >
+        {/* object-position tuned by eye rather than arithmetic: this keeps the
+            dog's eyes inside the visible band once the container crops the 8:5
+            image at desktop widths. */}
+        <Image
+          src={asset(PHOTOS.hero.src)}
+          alt={PHOTOS.hero.alt}
+          fill
+          priority
+          sizes="100vw"
+          className="object-cover object-[64%_58%]"
+        />
+        <div className="pointer-events-none absolute inset-x-0 bottom-0 h-28 bg-gradient-to-b from-transparent to-page" />
       </div>
     </section>
   );

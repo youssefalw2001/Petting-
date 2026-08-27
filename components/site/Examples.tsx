@@ -1,4 +1,4 @@
-import SongRow from "@/components/audio/SongRow";
+import SongCard from "@/components/audio/SongCard";
 import { EXAMPLES } from "@/lib/content";
 
 export default function Examples() {
@@ -18,10 +18,10 @@ export default function Examples() {
           </p>
         </div>
 
-        <div className="mx-auto mt-14 max-w-3xl border-b border-line">
+        <div className="mt-16 grid gap-x-8 gap-y-14 sm:grid-cols-2 lg:grid-cols-3">
           {EXAMPLES.map((song, i) => (
-            <div key={song.id} data-reveal data-reveal-delay={String(i * 80)}>
-              <SongRow song={song} />
+            <div key={song.id} data-reveal data-reveal-delay={String(i * 90)}>
+              <SongCard song={song} />
             </div>
           ))}
         </div>

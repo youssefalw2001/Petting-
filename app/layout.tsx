@@ -64,6 +64,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       </head>
       <body>
         <AudioProvider>{children}</AudioProvider>
+        <div className="grain" aria-hidden="true" />
         <Reveal />
       </body>
     </html>

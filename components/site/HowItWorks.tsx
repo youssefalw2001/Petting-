@@ -1,17 +1,32 @@
-import { STEPS } from "@/lib/content";
+import { STEPS, DETAILS } from "@/lib/content";
 
-/** Three steps, numbered, on hairlines. No illustrations. */
+/**
+ * Three steps on hairlines, with the personalisation line absorbed into the
+ * opening paragraph rather than given a section of its own.
+ */
 export default function HowItWorks() {
   return (
-    <section id="how" className="border-t border-line bg-raise band">
+    <section id="how" className="band">
       <div className="shell">
         <div className="mx-auto max-w-2xl text-center">
           <h2 data-reveal className="text-section font-light">
-            How it works
+            It&rsquo;s not just a song about a pet.
+            <br className="hidden sm:block" />{" "}
+            <em className="font-display italic text-rose-deep">
+              It&rsquo;s a song about yours.
+            </em>
           </h2>
+          <p
+            data-reveal
+            data-reveal-delay="90"
+            className="mx-auto mt-7 max-w-lg text-lede text-body"
+          >
+            Written from what you tell us — {DETAILS.join(", ")}. The small
+            things, mostly. They tend to be the ones that matter.
+          </p>
         </div>
 
-        <ol className="mx-auto mt-14 max-w-3xl">
+        <ol className="mx-auto mt-16 max-w-3xl">
           {STEPS.map((step, i) => (
             <li
               key={step.n}

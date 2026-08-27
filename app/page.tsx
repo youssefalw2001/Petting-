@@ -1,22 +1,21 @@
 import Nav from "@/components/site/Nav";
 import Hero from "@/components/site/Hero";
-import Opening from "@/components/site/Opening";
 import Receive from "@/components/site/Receive";
 import Examples from "@/components/site/Examples";
 import HowItWorks from "@/components/site/HowItWorks";
-import Personal from "@/components/site/Personal";
 import Testimonials from "@/components/site/Testimonials";
 import Closing from "@/components/site/Closing";
 import Footer from "@/components/site/Footer";
 
 /**
- * One page, read top to bottom as a single story:
+ * Six sections, read top to bottom as one story:
  *
- *   what this is → why it exists → what you receive → other people's →
- *   how it happens → why it's yours → what people say → begin
+ *   what this is → why a photograph isn't enough, and what you get instead →
+ *   other people's → why it's yours and how it happens → what people say → begin
  *
- * Eight sections. Anything that didn't help someone understand the product,
- * trust it, feel something, or buy it isn't here.
+ * Down from eight. The standalone emotional preamble folded into the section
+ * showing the song, and the personalisation section folded into how it works —
+ * both because a section that only carries one sentence isn't a section.
  */
 export default function Home() {
   return (
@@ -24,11 +23,9 @@ export default function Home() {
       <Nav />
       <main>
         <Hero />
-        <Opening />
         <Receive />
         <Examples />
         <HowItWorks />
-        <Personal />
         <Testimonials />
         <Closing />
       </main>
