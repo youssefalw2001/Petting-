@@ -1,4 +1,5 @@
 import { ButtonLink } from "@/components/ui/Button";
+import Magnetic from "@/components/ui/Magnetic";
 import { TailMark } from "@/components/ui/Logo";
 
 /**
@@ -37,7 +38,9 @@ export default function Closing() {
           </p>
 
           <div data-reveal data-reveal-delay="210" className="mt-11">
-            <ButtonLink href="/create/">Create Their Song</ButtonLink>
+            <Magnetic>
+              <ButtonLink href="/create/">Create Their Song</ButtonLink>
+            </Magnetic>
           </div>
         </div>
       </div>

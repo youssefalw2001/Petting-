@@ -4,6 +4,7 @@ import "./globals.css";
 import { AudioProvider } from "@/components/audio/AudioProvider";
 import Reveal from "@/components/ui/Reveal";
 import ScrollReset from "@/components/ui/ScrollReset";
+import ScrollProgress from "@/components/ui/ScrollProgress";
 
 /**
  * Sora for headlines — geometric, modern, and at weight 200–300 with tight
@@ -79,6 +80,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       </head>
       <body>
         <AudioProvider>{children}</AudioProvider>
+        <ScrollProgress />
         <div className="grain" aria-hidden="true" />
         <ScrollReset />
         <Reveal />

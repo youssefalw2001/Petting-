@@ -292,6 +292,45 @@
       opacity 900ms var(--ease-quiet),
       transform 900ms var(--ease-quiet);
   }
+
+  /* Photographs unmask upward instead of fading in. A wipe reads as the image
+     being uncovered; a fade reads as a page still loading. */
+  html.js [data-reveal="mask"] {
+    opacity: 1;
+    transform: none;
+    clip-path: inset(0 0 100% 0);
+  }
+
+  html.js [data-reveal="mask"].is-in {
+    clip-path: inset(0 0 0 0);
+    transition: clip-path 1300ms var(--ease-quiet);
+  }
+
+  /* ── Word-by-word lighting ──
+     The container carries --p (scroll progress) and --n (word count); each word
+     carries its own --i. Brightness is derived entirely in CSS, so the effect
+     costs one style write per frame no matter how long the sentence is. */
+  .word-light .word {
+    color: var(--color-hi);
+    opacity: clamp(0.16, calc((var(--p, 0) * var(--n) - var(--i)) * 1.6), 1);
+    transition: opacity 260ms linear;
+  }
+
+  /* Word-level rise inside a masked line. Scoped to the attribute value so it
+     doesn't depend on out-ordering the generic [data-reveal] rule above. */
+  html.js [data-reveal="word"] {
+    display: inline-block;
+    opacity: 0;
+    transform: translateY(0.62em);
+  }
+
+  html.js [data-reveal="word"].is-in {
+    opacity: 1;
+    transform: none;
+    transition:
+      opacity 760ms var(--ease-quiet),
+      transform 900ms var(--ease-quiet);
+  }
 }
 
 @keyframes step-in {

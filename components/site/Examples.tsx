@@ -24,7 +24,7 @@ export default function Examples() {
 
         <div className="mt-16 grid gap-x-8 gap-y-14 sm:grid-cols-2 lg:grid-cols-3">
           {EXAMPLES.map((song, i) => (
-            <div key={song.id} data-reveal data-reveal-delay={String(i * 90)}>
+            <div key={song.id} data-reveal="mask" data-reveal-delay={String(i * 90)}>
               <SongCard song={song} />
             </div>
           ))}

@@ -1,25 +1,29 @@
 "use client";
 
 import { useEffect, useRef, type ReactNode } from "react";
+import { onScrollFrame, prefersReduced } from "@/lib/scrollEngine";
 
 /**
- * Subtle scroll-linked drift.
+ * Scroll-linked drift, with an optional settle-away as the element leaves.
  *
- * One passive scroll listener, coalesced into a single rAF, writing one
- * `translate3d` — so it never reads layout during scroll and never touches
- * anything the compositor can't handle on its own thread.
+ * Now subscribes to the shared scroll engine rather than attaching its own
+ * listener, so adding scroll effects to the page doesn't add scroll handlers.
+ * Writes one `transform` (and optionally one `opacity`) per frame and reads
+ * layout only through a single `getBoundingClientRect`.
  *
- * Skipped entirely under `prefers-reduced-motion`, and skipped on narrow
- * viewports where it costs frames and buys nothing.
+ * Off under reduced motion and off below 768px, where it costs frames and buys
+ * nothing on a screen that size.
  */
 export default function Parallax({
   children,
   strength = 0.12,
+  /** Scale down and fade slightly as it scrolls out of view. Cinematic depth. */
+  settle = false,
   className = "",
 }: {
   children: ReactNode;
-  /** Fraction of scroll distance to drift. Keep it under ~0.2. */
   strength?: number;
+  settle?: boolean;
   className?: string;
 }) {
   const ref = useRef<HTMLDivElement>(null);
@@ -27,38 +31,29 @@ export default function Parallax({
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
+    if (prefersReduced()) return;
+    if (window.matchMedia("(max-width: 767px)").matches) return;
 
-    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)");
-    const narrow = window.matchMedia("(max-width: 767px)");
-    if (reduce.matches || narrow.matches) return;
+    return onScrollFrame(() => {
+      const r = el.getBoundingClientRect();
+      const vh = window.innerHeight;
 
-    let frame = 0;
+      // -1 below the fold, 0 centred, +1 above the top
+      const centred =
+        (r.top + r.height / 2 - vh / 2) / (vh / 2 + r.height / 2);
+      const shift = -centred * strength * r.height;
 
-    const update = () => {
-      frame = 0;
-      const rect = el.getBoundingClientRect();
-      // progress: -1 just below the viewport, +1 just above it
-      const progress =
-        (rect.top + rect.height / 2 - window.innerHeight / 2) /
-        (window.innerHeight / 2 + rect.height / 2);
-      const shift = progress * strength * rect.height;
-      el.style.transform = `translate3d(0, ${shift.toFixed(2)}px, 0)`;
-    };
-
-    const onScroll = () => {
-      if (!frame) frame = requestAnimationFrame(update);
-    };
-
-    update();
-    window.addEventListener("scroll", onScroll, { passive: true });
-    window.addEventListener("resize", onScroll, { passive: true });
-    return () => {
-      if (frame) cancelAnimationFrame(frame);
-      window.removeEventListener("scroll", onScroll);
-      window.removeEventListener("resize", onScroll);
-      el.style.transform = "";
-    };
-  }, [strength]);
+      if (settle) {
+        // Only acts once the element starts leaving upward.
+        const out = Math.min(1, Math.max(0, -centred));
+        const scale = 1 - out * 0.06;
+        el.style.transform = `translate3d(0,${shift.toFixed(2)}px,0) scale(${scale.toFixed(4)})`;
+        el.style.opacity = String(1 - out * 0.35);
+      } else {
+        el.style.transform = `translate3d(0,${shift.toFixed(2)}px,0)`;
+      }
+    });
+  }, [strength, settle]);
 
   return (
     <div ref={ref} className={className} style={{ willChange: "transform" }}>

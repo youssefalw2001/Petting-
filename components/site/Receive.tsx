@@ -1,6 +1,6 @@
 import Photo from "@/components/ui/Photo";
 import SongPlayer from "@/components/audio/SongPlayer";
-import Lines from "@/components/ui/Lines";
+import WordLight from "@/components/ui/WordLight";
 import { FEATURED, PHOTOS } from "@/lib/content";
 
 /**
@@ -16,11 +16,12 @@ export default function Receive() {
     <section className="border-y border-line bg-surface band">
       <div className="shell">
         <div className="mx-auto max-w-2xl text-center">
-          <Lines
+          {/* The one sentence that gets the scroll-lit treatment. It's the
+              emotional thesis of the whole page, and lighting it word by word
+              makes it arrive at reading speed instead of all at once. */}
+          <WordLight
+            text="Some memories deserve more than a photograph."
             className="text-section font-extralight"
-            delay={70}
-            step={100}
-            lines={["Some memories deserve", "more than a photograph."]}
           />
           <p
             data-reveal
@@ -33,7 +34,7 @@ export default function Receive() {
         </div>
 
         <div className="mt-16 grid items-center gap-12 md:mt-20 md:grid-cols-2 md:gap-16">
-          <div data-reveal>
+          <div data-reveal="mask">
             <Photo
               photo={PHOTOS[FEATURED.photo]}
               sizes="(max-width: 768px) 100vw, 520px"

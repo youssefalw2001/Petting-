@@ -2,6 +2,7 @@ import Image from "next/image";
 import { ButtonLink } from "@/components/ui/Button";
 import Lines from "@/components/ui/Lines";
 import Parallax from "@/components/ui/Parallax";
+import Magnetic from "@/components/ui/Magnetic";
 import { PHOTOS } from "@/lib/content";
 import { asset } from "@/lib/asset";
 
@@ -47,7 +48,9 @@ export default function Hero() {
             data-reveal-delay="420"
             className="mt-11 flex flex-col items-center gap-5"
           >
-            <ButtonLink href="/create/">Create Their Song</ButtonLink>
+            <Magnetic>
+              <ButtonLink href="/create/">Create Their Song</ButtonLink>
+            </Magnetic>
             <p className="label">Made from your memories · Kept forever</p>
           </div>
         </div>
@@ -56,7 +59,7 @@ export default function Hero() {
       <div className="relative mt-9 h-[56vh] min-h-[20rem] w-full overflow-hidden md:mt-10 md:h-[66vh]">
         {/* Parallax sits outside, scale-settle inside, so the two transforms
             never fight over the same element. */}
-        <Parallax strength={0.1} className="absolute inset-0">
+        <Parallax strength={0.1} settle className="absolute inset-0">
           <div className="photo-settle absolute inset-0">
             {/* object-position tuned by eye so the dog's eyes stay inside the
                 visible band once the container crops the 8:5 image. */}
