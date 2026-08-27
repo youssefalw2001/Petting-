@@ -21,5 +21,10 @@ export const BASE_PATH = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
 
 export function asset(path: string): string {
   if (/^(https?:)?\/\//.test(path)) return path; // already absolute
+  // `blob:` and `data:` are already complete references to bytes the browser is
+  // holding. Prefixing them produces `/Petting-/blob:…`, which resolves to
+  // nothing. The studio fetches audio with an auth header and plays the
+  // resulting object URL, so this case is load-bearing there.
+  if (/^(blob|data):/.test(path)) return path;
   return `${BASE_PATH}${path.startsWith("/") ? "" : "/"}${path}`;
 }
