@@ -11,24 +11,26 @@
  * 96 / 48 / 32 / 24 / 18px. The disc was the problem, so the disc went.
  */
 
+/**
+ * Filled and tapered — thick at the base, narrowing to a curled point.
+ *
+ * The stroked version read as a thin hook, indistinguishable from a lowercase p
+ * at nav size. Rendering both at 48 / 22 / 16px side by side made it obvious: a
+ * uniform stroke has no mass, so it reads as a glyph. Giving the base weight and
+ * the tip a point is what makes it read as a tail.
+ */
 const TAIL =
-  "M15 42C15 30 15 18 21 11.5 26 6 33.5 8 33.5 15 33.5 20.5 28 22.5 25 19.5";
+  "M13.2 43C13.2 31 12.6 19.4 19.2 11.6 25.2 4.4 36.4 6.6 36.4 15.6 36.4 22.2 30.4 26 26 23.2 28.8 24 32.4 21.4 32.6 16.2 32.8 10.2 25.6 8.8 22.4 14.4 18.8 20.8 20.8 31.4 20.8 43Z";
 
 export function TailMark({ className = "" }: { className?: string }) {
   return (
     <svg
       viewBox="0 0 48 48"
       className={className}
-      fill="none"
       aria-hidden="true"
       focusable="false"
     >
-      <path
-        d={TAIL}
-        stroke="currentColor"
-        strokeWidth={6}
-        strokeLinecap="round"
-      />
+      <path d={TAIL} fill="currentColor" />
     </svg>
   );
 }

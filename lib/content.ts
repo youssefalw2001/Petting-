@@ -134,27 +134,53 @@ export const DETAILS = [
 
 /* ──────────────────────────── testimonials ──────────────────────────── */
 
-/**
- * ⚠️  PLACEHOLDER — REPLACE BEFORE LAUNCH.
- *
- * Invented reviews break the FTC rule on consumer testimonials and are the
- * fastest way to lose a payment processor. The site renders a visible notice
- * while this flag is true, and that is deliberate: hiding it behind an env
- * check would ship fabricated quotes to production with nothing to warn you.
- */
-export const TESTIMONIALS_ARE_PLACEHOLDER = true;
+/* ──────────────────────────── the promise ──────────────────────────── */
 
-export const TESTIMONIALS = [
+/**
+ * What stands in for social proof until there is any.
+ *
+ * Every line here is a commitment you can actually keep, which is the only kind
+ * of trust signal available to a business on day one.
+ */
+export const PROMISES = [
   {
-    quote:
-      "I cried the first time I heard it. It felt like someone had taken all the little memories I was afraid I'd forget and put them into one song.",
-    name: "Placeholder",
-    detail: "Luna's mom",
+    n: "01",
+    title: "A person reads every word",
+    body: "Not a form that feeds a template. Someone sits with what you wrote about them.",
   },
   {
-    quote:
-      "My husband has played it every morning since it arrived. He has never once played the same thing twice.",
-    name: "Placeholder",
-    detail: "Buddy's family",
+    n: "02",
+    title: "Two versions, not one take",
+    body: "You choose. If neither is right, we write it again — that isn't an upgrade, it's the job.",
+  },
+  {
+    n: "03",
+    title: "Yours to keep",
+    body: "Download it, play it, share it. We don't put it on streaming or licence it to anyone.",
+  },
+  {
+    n: "04",
+    title: "Never shared without you",
+    body: "Their song and their photographs stay between us unless you tell us otherwise, in writing.",
   },
 ];
+
+/* ──────────────────────────── testimonials ──────────────────────────── */
+
+export type Testimonial = { quote: string; name: string; detail: string };
+
+/**
+ * Empty on purpose.
+ *
+ * There are no customers yet, so there are no quotes. Writing some would be
+ * fabricating consumer testimonials, which the FTC rule on reviews and
+ * testimonials prohibits outright and which payment processors treat as grounds
+ * for termination — a bad trade for a business about to take its first order.
+ *
+ * Add real ones here as they arrive, with written permission, and the section
+ * appears on the page by itself. Nothing else needs changing.
+ *
+ * The fastest honest route to filling this: the free-song giveaway. Twenty real
+ * reactions inside a week, every one of them quotable.
+ */
+export const TESTIMONIALS: Testimonial[] = [];

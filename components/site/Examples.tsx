@@ -1,4 +1,5 @@
 import SongCard from "@/components/audio/SongCard";
+import Lines from "@/components/ui/Lines";
 import { EXAMPLES } from "@/lib/content";
 
 export default function Examples() {
@@ -6,9 +7,12 @@ export default function Examples() {
     <section id="examples" className="band">
       <div className="shell">
         <div className="mx-auto max-w-2xl text-center">
-          <h2 data-reveal className="text-section font-light">
-            Every pet has a story.
-          </h2>
+          <Lines
+            className="text-section font-extralight"
+            delay={70}
+            step={100}
+            lines={["Every pet has a story."]}
+          />
           <p
             data-reveal
             data-reveal-delay="90"

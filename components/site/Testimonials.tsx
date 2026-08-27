@@ -1,25 +1,24 @@
-import { TESTIMONIALS, TESTIMONIALS_ARE_PLACEHOLDER } from "@/lib/content";
+import { TESTIMONIALS } from "@/lib/content";
 
-/** Three quotes, large serif, hairlines between. No cards. */
+/**
+ * Renders nothing while `TESTIMONIALS` is empty, which it is until there are
+ * real ones. Add a quote to `lib/content.ts` and this section appears on the
+ * page by itself — no wiring, no placeholder to remember to delete, and no
+ * invented reviews sitting in production waiting to be noticed.
+ */
 export default function Testimonials() {
-  return (
-    <section className="band">
-      <div className="shell">
-        {TESTIMONIALS_ARE_PLACEHOLDER && (
-          <div
-            role="note"
-            className="mx-auto mb-14 max-w-2xl border border-dashed border-edge px-5 py-4 font-mono text-[0.75rem] leading-relaxed text-low"
-          >
-            BUILD NOTE — these quotes are placeholders. Publishing invented
-            reviews breaks the FTC rule on consumer testimonials. Replace them
-            with real messages you have written permission to quote, then set
-            TESTIMONIALS_ARE_PLACEHOLDER to false in lib/content.ts. This notice
-            is not hidden behind an environment check on purpose: that would ship
-            fabricated quotes to production with nothing to warn you.
-          </div>
-        )}
+  if (TESTIMONIALS.length === 0) return null;
 
-        <div className="mx-auto max-w-3xl">
+  return (
+    <section className="border-t border-line band">
+      <div className="shell">
+        <div className="mx-auto max-w-2xl text-center">
+          <p data-reveal className="label">
+            From families
+          </p>
+        </div>
+
+        <div className="mx-auto mt-14 max-w-3xl">
           {TESTIMONIALS.map((t, i) => (
             <figure
               key={i}

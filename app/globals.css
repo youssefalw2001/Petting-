@@ -218,7 +218,65 @@
 }
 
 /* ==========================================================================
-   Reveal — the only animation
+   Motion
+   ========================================================================== */
+
+/* Slow settle on the hero photograph. One shot on load, never repeats — it
+   makes the image feel like it's arriving rather than already sitting there. */
+@keyframes photo-settle {
+  from {
+    transform: scale(1.07);
+  }
+  to {
+    transform: scale(1);
+  }
+}
+
+@utility photo-settle {
+  animation: photo-settle 2200ms var(--ease-quiet) both;
+}
+
+/* Playing indicator. The only looping animation on the site, and it runs only
+   while audio is actually playing. */
+@keyframes eq {
+  0%,
+  100% {
+    transform: scaleY(0.35);
+  }
+  50% {
+    transform: scaleY(1);
+  }
+}
+
+@layer base {
+  .eq-bar {
+    transform-origin: bottom;
+    animation: eq 900ms ease-in-out infinite;
+  }
+  .eq-2 {
+    animation-duration: 640ms;
+    animation-delay: 120ms;
+  }
+  .eq-3 {
+    animation-duration: 1120ms;
+    animation-delay: 260ms;
+  }
+
+  /* Photographs lift under the pointer. Transform and filter only. */
+  .photo-lift {
+    transition:
+      transform 1100ms var(--ease-quiet),
+      filter 700ms var(--ease-quiet);
+    filter: brightness(0.92);
+  }
+  .group:hover .photo-lift {
+    transform: scale(1.045);
+    filter: brightness(1.04);
+  }
+}
+
+/* ==========================================================================
+   Reveal
    ========================================================================== */
 
 @layer base {

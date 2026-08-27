@@ -3,6 +3,7 @@
 import { useAudio } from "./AudioProvider";
 import Waveform from "./Waveform";
 import { PlayIcon, PauseIcon } from "./icons";
+import PlayingBars from "./PlayingBars";
 import { timecode } from "@/lib/format";
 import type { Song } from "@/lib/content";
 
@@ -24,7 +25,10 @@ export default function SongPlayer({ song }: { song: Song }) {
 
   return (
     <div>
-      <p className="label">Their song</p>
+      <p className="label flex items-center gap-3">
+        Their song
+        {playing && <PlayingBars className="text-amber" />}
+      </p>
 
       <h3 className="mt-5 font-display text-[clamp(2rem,4.2vw,2.75rem)] font-extralight leading-[1.04] text-hi">
         {song.pet}

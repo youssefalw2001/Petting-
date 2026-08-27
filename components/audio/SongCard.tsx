@@ -1,9 +1,11 @@
 "use client";
 
+import Image from "next/image";
 import { useAudio } from "./AudioProvider";
 import { PlayIcon, PauseIcon } from "./icons";
-import Photo from "@/components/ui/Photo";
+import PlayingBars from "./PlayingBars";
 import { PHOTOS, type Song } from "@/lib/content";
+import { asset } from "@/lib/asset";
 
 /**
  * A tall portrait with the control on the image, name and title beneath.
@@ -11,6 +13,9 @@ import { PHOTOS, type Song } from "@/lib/content";
  * The photographs are the emotional argument, so they get to be large. An
  * earlier version used 88px thumbnails in a row, at which size the animal was a
  * smudge.
+ *
+ * Image is used directly rather than through <Photo> so the hover lift can be
+ * applied to the img itself — scaling a wrapper would scale the control with it.
  */
 export default function SongCard({ song }: { song: Song }) {
   const { current, isPlaying, progress, toggle } = useAudio();
@@ -18,6 +23,7 @@ export default function SongCard({ song }: { song: Song }) {
   const isThis = current?.id === song.id;
   const playing = isThis && isPlaying;
   const pos = isThis ? progress : 0;
+  const photo = PHOTOS[song.photo];
 
   return (
     <article>
@@ -30,16 +36,22 @@ export default function SongCard({ song }: { song: Song }) {
         }
         className="group relative block w-full overflow-hidden rounded-[2px] text-left"
       >
-        <Photo
-          photo={PHOTOS[song.photo]}
-          sizes="(max-width: 640px) 88vw, (max-width: 1024px) 44vw, 350px"
-          ratio="4 / 5"
-        />
+        <div className="relative aspect-4/5 w-full overflow-hidden bg-surface">
+          <Image
+            src={asset(photo.src)}
+            alt={photo.alt}
+            fill
+            sizes="(max-width: 640px) 88vw, (max-width: 1024px) 44vw, 350px"
+            className="photo-lift object-cover"
+          />
+        </div>
 
-        {/* lifts slightly on hover so the control reads on any photograph */}
-        <span className="pointer-events-none absolute inset-0 bg-base/0 transition-colors duration-500 group-hover:bg-base/20" />
-
-        <span className="glow surface-amber pointer-events-none absolute bottom-4 left-4 flex size-11 items-center justify-center rounded-full bg-amber text-base">
+        <span
+          className={[
+            "glow surface-amber pointer-events-none absolute bottom-4 left-4 flex size-11 items-center justify-center rounded-full bg-amber text-base transition-transform duration-500",
+            "group-hover:scale-105",
+          ].join(" ")}
+        >
           {playing ? (
             <PauseIcon className="size-3" />
           ) : (
@@ -47,9 +59,15 @@ export default function SongCard({ song }: { song: Song }) {
           )}
         </span>
 
+        {playing && (
+          <span className="pointer-events-none absolute bottom-[1.45rem] right-4 text-amber">
+            <PlayingBars />
+          </span>
+        )}
+
         <span className="pointer-events-none absolute inset-x-0 bottom-0 h-[2px] bg-hi/15">
           <span
-            className="block h-full bg-amber"
+            className="block h-full bg-amber transition-[width] duration-150"
             style={{ width: `${pos * 100}%` }}
           />
         </span>

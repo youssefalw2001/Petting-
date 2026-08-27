@@ -1,5 +1,6 @@
 import Photo from "@/components/ui/Photo";
 import SongPlayer from "@/components/audio/SongPlayer";
+import Lines from "@/components/ui/Lines";
 import { FEATURED, PHOTOS } from "@/lib/content";
 
 /**
@@ -15,10 +16,12 @@ export default function Receive() {
     <section className="border-y border-line bg-surface band">
       <div className="shell">
         <div className="mx-auto max-w-2xl text-center">
-          <h2 data-reveal className="text-section font-light">
-            Some memories deserve
-            <br className="hidden sm:block" /> more than a photograph.
-          </h2>
+          <Lines
+            className="text-section font-extralight"
+            delay={70}
+            step={100}
+            lines={["Some memories deserve", "more than a photograph."]}
+          />
           <p
             data-reveal
             data-reveal-delay="90"

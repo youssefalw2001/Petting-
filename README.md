@@ -75,16 +75,22 @@ because a 4:5 portrait left a dead block of background beside the player.
 
 ## Motion
 
-One effect: a gentle rise-and-fade as each block enters view. `[data-reveal]`
-plus one IntersectionObserver mounted in the layout.
+Five effects, all transform/opacity, still with **no animation library**:
 
-This replaced GSAP, ScrollTrigger, SplitText and Lenis. A memorial page doesn't
-need scroll-jacking or split-text choreography — it needs to load fast and sit
-still. Removing all four cut three dependencies and every infinite animation
-from the page (verified: `document.getAnimations()` returns zero looping).
+- **Reveal** — one IntersectionObserver in the layout drives every
+  `[data-reveal]` element. No section owns animation code.
+- **Headline lines** — `<Lines>` rises each line from behind its own mask. Lines
+  are declared, not measured, so there's no splitting library and no reflow risk.
+  Server-rendered, zero client JS.
+- **Hero settle** — the photograph eases from a slight scale once on load.
+- **Parallax** — one passive scroll listener coalesced into a single rAF writing
+  one `translate3d`. Off under reduced motion and off below 768px.
+- **Playing bars** — the only looping animation, and it exists only while audio
+  is playing. Verified: `document.getAnimations()` reports 0 looping at rest, 3
+  during playback, 0 again on pause.
 
-The transition lives in CSS, so `prefers-reduced-motion` disables it with no
-JavaScript branch.
+All of it is CSS transitions and keyframes, so `prefers-reduced-motion` disables
+everything without a single JavaScript branch.
 
 ## The Create flow
 
@@ -130,11 +136,15 @@ missing env var or a failed request.
    Swap them for real customer photographs the moment you have written
    permission — that's the only thing that will beat these. Replace the `src`
    values in `PHOTOS` (`lib/content.ts`); nothing else changes.
-2. **Testimonials.** `TESTIMONIALS` are placeholders and the page renders a
-   visible build note while `TESTIMONIALS_ARE_PLACEHOLDER` is true. Invented
-   reviews break the FTC rule on consumer testimonials. The notice is
-   deliberately not hidden behind an env check — that would ship fabricated
-   quotes to production with nothing to warn you.
+2. **Testimonials.** `TESTIMONIALS` is an empty array and `<Testimonials />`
+   renders nothing. Add real quotes with written permission and the section
+   appears on the page by itself.
+
+   It's empty rather than filled with invented quotes because fabricating
+   consumer testimonials is prohibited outright by the FTC rule on reviews and
+   is treated by payment processors as grounds for termination. `<Promise />`
+   holds that ground in the meantime with four commitments that are actually
+   true. The fastest honest route to real quotes is the free-song giveaway.
 3. **Songs.** `public/songs/*.wav` are generated demonstrations and the player
    says so. Swap in real songs, update `src` and `length` in `lib/content.ts`,
    and remove the note.
