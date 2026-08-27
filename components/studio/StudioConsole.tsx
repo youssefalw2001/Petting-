@@ -169,19 +169,25 @@ function Connect({ onConnect }: { onConnect: (c: Connection) => void }) {
           />
         </Field>
 
-        <Field label="Operator token" hint="OPERATOR_TOKEN from the service's .env.">
+        <Field
+          label="Operator token"
+          hint="OPERATOR_TOKEN from the service's environment. Leave blank if the service doesn't have one set."
+        >
           <TextInput
             type="password"
             value={token}
             onChange={(e) => setToken(e.target.value)}
             autoComplete="off"
+            placeholder="none"
             onKeyDown={(e) => {
-              if (e.key === "Enter" && token.trim()) void handleConnect();
+              if (e.key === "Enter") void handleConnect();
             }}
           />
         </Field>
 
-        <Button onClick={handleConnect} disabled={busy || !token.trim()}>
+        {/* Not disabled on an empty token: a service without OPERATOR_TOKEN set
+            is open, and requiring one here would make it unreachable. */}
+        <Button onClick={handleConnect} disabled={busy}>
           {busy ? "Checking…" : "Connect"}
         </Button>
 
@@ -232,6 +238,13 @@ function ServiceStrip({
                   thinking on — expect timeouts on the hosted endpoint
                 </span>
               ) : null}
+              {/* An open service should be visible while you work, not only in a
+                  boot log nobody re-reads. */}
+              {status.auth === "open" ? (
+                <span className="border-l-2 border-rose pl-2 text-ink">
+                  no token — anyone with this URL can read every customer&rsquo;s answers
+                </span>
+              ) : null}
             </>
           ) : null}
 
@@ -242,7 +255,7 @@ function ServiceStrip({
           onClick={onForget}
           className="text-[0.8125rem] text-muted underline decoration-muted/30 underline-offset-4 transition-colors duration-200 hover:text-ink"
         >
-          Forget token
+          Disconnect
         </button>
       </div>
 

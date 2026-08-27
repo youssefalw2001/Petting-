@@ -83,6 +83,8 @@ export type ServiceStatus = {
   provider: { ok: boolean; provider: string; detail: string; models?: string[] };
   queue: { depth: number; current: string | null; running: boolean };
   thinking: boolean;
+  /** "open" means the service has no OPERATOR_TOKEN set and accepts anyone. */
+  auth?: "open" | "token";
 };
 
 // --- connection -------------------------------------------------------------
@@ -96,6 +98,7 @@ export type ServiceStatus = {
  * env vars at build time. The token is a runtime value because a static export
  * publishes its env vars to anyone who views source.
  */
+/** `token` may be empty — the service treats an unset OPERATOR_TOKEN as open. */
 export type Connection = { baseUrl: string; token: string };
 
 const STORAGE_KEY = "tails-studio-connection";
@@ -121,8 +124,10 @@ export function loadConnection(): Connection | null {
     const raw = window.localStorage.getItem(STORAGE_KEY);
     if (!raw) return null;
     const parsed = JSON.parse(raw) as Partial<Connection>;
-    if (!parsed.baseUrl || !parsed.token) return null;
-    return { baseUrl: parsed.baseUrl, token: parsed.token };
+    // Only the URL is required. A blank token is a valid connection to a service
+    // running without OPERATOR_TOKEN set.
+    if (!parsed.baseUrl) return null;
+    return { baseUrl: parsed.baseUrl, token: parsed.token ?? "" };
   } catch {
     return null;
   }
@@ -160,7 +165,10 @@ async function request<T>(
     res = await fetch(`${connection.baseUrl}${path}`, {
       ...init,
       headers: {
-        Authorization: `Bearer ${connection.token}`,
+        // Omitted entirely when there is no token, rather than sent as an empty
+        // `Bearer `. A header that looks like a credential and isn't one is the
+        // kind of thing that makes an auth bug take an afternoon.
+        ...(connection.token ? { Authorization: `Bearer ${connection.token}` } : {}),
         ...(init.body ? { "Content-Type": "application/json" } : {}),
         ...(init.headers ?? {}),
       },
