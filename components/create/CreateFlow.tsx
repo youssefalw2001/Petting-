@@ -1,9 +1,10 @@
 "use client";
 
-import { useCallback, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { STEPS, TOTAL, LABELS, SUMMARY_ORDER, type Step } from "@/lib/questions";
-import { Button, TextLink } from "@/components/ui/Button";
+import { Button, ButtonLink, TextLink } from "@/components/ui/Button";
+import { PRICE, PAYMENTS_LIVE, makeRef, checkoutUrl } from "@/lib/config";
 
 type Answers = Record<string, string>;
 
@@ -26,6 +27,15 @@ export default function CreateFlow() {
   );
   const [copied, setCopied] = useState(false);
   const fileInput = useRef<HTMLInputElement>(null);
+
+  /**
+   * Generated in an effect, not in a useState initialiser: crypto exists on the
+   * server too, so initialising there would produce one value during SSR and a
+   * different one on the client — a hydration mismatch on every load. It isn't
+   * needed until submit, so a frame late costs nothing.
+   */
+  const [ref, setRef] = useState("");
+  useEffect(() => setRef(makeRef()), []);
 
   const step = STEPS[i];
   const last = i === TOTAL - 1;
@@ -51,11 +61,12 @@ export default function CreateFlow() {
   const submit = useCallback(async () => {
     const payload: Answers = {
       ...a,
+      reference: ref,
       photoNames: files.length
         ? files.map((f) => f.name).join(", ")
         : "none — to follow by email",
     };
-    payload.subject = `Song request — ${a.petName || "unnamed"}`;
+    payload.subject = `Song request ${ref} — ${a.petName || "unnamed"}`;
     payload.summary = summarise(payload);
 
     if (!ENDPOINT) {
@@ -115,17 +126,10 @@ export default function CreateFlow() {
         </h1>
 
         {state === "done" ? (
-          <>
-            <p className="mt-7 text-lede text-mid">
-              A real person will read every word of that. We&rsquo;ll write to you
-              at <span className="text-hi">{a.email}</span> within 48 hours — and
-              if you haven&rsquo;t sent photos yet, you can simply reply to that
-              email with them.
-            </p>
-            <p className="mt-6 text-[0.9375rem] text-low">
-              Nothing has been charged.
-            </p>
-          </>
+          <p className="mt-7 text-lede text-mid">
+            A real person will read every word of that. If you haven&rsquo;t sent
+            photos yet, just reply to the email we send you.
+          </p>
         ) : (
           <>
             <p className="mt-7 text-lede text-mid">
@@ -137,6 +141,7 @@ export default function CreateFlow() {
             </pre>
             <div className="mt-6 flex flex-wrap items-center gap-5">
               <Button
+                variant="outline"
                 onClick={() => {
                   void navigator.clipboard
                     ?.writeText(summarise(a))
@@ -148,13 +153,52 @@ export default function CreateFlow() {
               </Button>
               <TextLink
                 href={`mailto:hello@tailsweremember.com?subject=${encodeURIComponent(
-                  `Song for ${a.petName || "my pet"}`
+                  `Song ${ref} for ${a.petName || "my pet"}`
                 )}&body=${encodeURIComponent(summarise(a))}`}
               >
                 Open my email instead
               </TextLink>
             </div>
           </>
+        )}
+
+        {/* Payment is offered after EITHER outcome.
+            It used to sit inside the `done` branch only, which meant that with no
+            form endpoint configured — the default — the flow ended on the
+            copy-and-email fallback and never asked for money at all. */}
+        {PAYMENTS_LIVE ? (
+          <div className="mt-11 border-t border-line pt-9">
+            <p className="label">One last step</p>
+            <h2 className="mt-4 font-display text-[1.5rem] font-light leading-snug text-hi">
+              Complete your order — {PRICE}
+            </h2>
+            <p className="mt-3 max-w-md text-[0.9375rem] leading-relaxed text-low">
+              We start writing as soon as this comes through, and you&rsquo;ll
+              have {a.petName || "their"} song within 48 hours. Payment is handled
+              entirely by Stripe — we never see your card details.
+            </p>
+
+            <div className="mt-7">
+              <ButtonLink href={checkoutUrl(ref)}>
+                Pay {PRICE} securely
+              </ButtonLink>
+            </div>
+
+            <p className="mono mt-7 text-[0.75rem] text-low">
+              Order reference {ref}
+            </p>
+          </div>
+        ) : (
+          <p className="mt-8 border-t border-line pt-7 text-[0.9375rem] text-low">
+            Nothing has been charged. We&rsquo;ll be in touch within 48 hours
+            {a.email ? (
+              <>
+                {" "}
+                at <span className="text-hi">{a.email}</span>
+              </>
+            ) : null}
+            .
+          </p>
         )}
 
         <p className="mt-12">

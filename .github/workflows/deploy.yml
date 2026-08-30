@@ -37,6 +37,15 @@ jobs:
           # if you attach a custom domain — a custom domain serves from the
           # root and the prefix would then break every asset.
           NEXT_PUBLIC_BASE_PATH: /Petting-
+
+          # Stripe Payment Link. Paste yours here to switch payments on; leaving
+          # it empty is safe — the order flow simply ends on "nothing has been
+          # charged" and renders no payment button.
+          #
+          # This is a PUBLIC url by design, the same thing you'd put in an
+          # Instagram bio. Never put a secret key (sk_live_...) in this file.
+          NEXT_PUBLIC_STRIPE_LINK: ""
+          NEXT_PUBLIC_PRICE: "$97"
         run: npm run build
 
       - name: Fail if _next is missing

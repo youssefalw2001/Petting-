@@ -1,5 +1,6 @@
 import { ButtonLink } from "@/components/ui/Button";
 import Magnetic from "@/components/ui/Magnetic";
+import { PRICE } from "@/lib/config";
 import { TailMark } from "@/components/ui/Logo";
 
 /**
@@ -41,6 +42,11 @@ export default function Closing() {
             <Magnetic>
               <ButtonLink href="/create/">Create Their Song</ButtonLink>
             </Magnetic>
+            {/* Stated before anyone spends five minutes writing. Withholding it
+                until the end of the flow is how you lose people at the end. */}
+            <p data-reveal data-reveal-delay="280" className="label mt-7">
+              {PRICE} · Delivered within 48 hours
+            </p>
           </div>
         </div>
       </div>

@@ -118,6 +118,78 @@ to the email with them.
 summary with a copy button and a mailto link. Nobody's answers are lost to a
 missing env var or a failed request.
 
+## Taking payments
+
+There is no server — this is a static export — so there is nowhere to run
+Stripe's server SDK, create a Checkout Session, or receive a webhook. The
+approach that actually fits is a **Stripe Payment Link**: Stripe hosts the whole
+checkout, handles cards, wallets, receipts and PCI scope, and the site only ever
+links to it.
+
+### Setup, once
+
+1. **Create a Stripe account** at [stripe.com](https://stripe.com) and complete
+   the activation steps. You can do this as an individual — a company isn't
+   required in most countries.
+2. **Product catalogue → Add product.** Name it (e.g. "A song for your pet"),
+   set a **one-time** price of $97, save.
+3. **Payment Links → Create link**, choose that product, and under *After
+   payment* set a confirmation message such as: *"Thank you. We're writing their
+   song now — you'll hear from us within 48 hours."*
+4. Copy the link. It looks like `https://buy.stripe.com/xxxxxxxx`.
+5. Add it to the deploy workflow (`.github/workflows/deploy.yml`) next to the
+   existing base-path variable:
+
+```yaml
+env:
+  NEXT_PUBLIC_BASE_PATH: /Petting-
+  NEXT_PUBLIC_STRIPE_LINK: https://buy.stripe.com/xxxxxxxx
+  NEXT_PUBLIC_PRICE: "$97"
+```
+
+Locally, put the same two lines in `.env.local`.
+
+These are safe to commit. A Payment Link URL is public by design — it's the same
+thing you'd paste into an Instagram bio. **Never** put a secret key
+(`sk_live_…`) in this repo; nothing here needs one.
+
+### How an order is matched to a pet
+
+The flow captures the story **before** asking for money, so nothing is written
+unpaid and the email is captured even if payment is abandoned — which makes a
+follow-up possible.
+
+On submit the site generates a short opaque reference (`TWR-XXXXXX`), shows it to
+the customer, includes it in the emailed story, and appends it to the Payment
+Link as [`client_reference_id`](https://docs.stripe.com/payment-links/url-parameters).
+Stripe displays that value on the payment, so matching a payment to a story is
+just reading the code. No backend required.
+
+The reference is deliberately random rather than derived from a name or email:
+Stripe's own guidance is to keep nothing sensitive in that parameter, because
+links can end up in unexpected places.
+
+### Without a link configured
+
+`PAYMENTS_LIVE` is false, no payment button renders, and the flow ends on
+"nothing has been charged". Nothing breaks and nothing half-works.
+
+### Worth knowing
+
+- Stripe's standard rate is **2.9% + 30¢** per successful card charge in the US,
+  so about **$3.11** on $97. Verify current pricing for your country.
+- Payouts arrive on a rolling schedule once your account is activated.
+- Turn on **Stripe Tax** if you need VAT or sales tax handled.
+- Test with a card in test mode first: `4242 4242 4242 4242`, any future expiry,
+  any CVC. Use your test-mode Payment Link for that, then swap to the live one.
+
+### When you outgrow it
+
+The moment you want card details collected on your own page, tiers priced
+dynamically, or automatic fulfilment on payment, you need a server — a single
+serverless function is enough. That means moving the site from GitHub Pages to
+Vercel, which is a deploy change rather than a rewrite.
+
 ## Before this goes live
 
 1. **Photography.** The five photographs are CC0 (public domain) via Openverse —
@@ -148,10 +220,12 @@ missing env var or a failed request.
 3. **Songs.** `public/songs/*.wav` are generated demonstrations and the player
    says so. Swap in real songs, update `src` and `length` in `lib/content.ts`,
    and remove the note.
-4. **Price.** There is no pricing section — the brief asked for a memorial
-   experience, not a store. Nothing on the page states a price and nothing is
-   charged; the flow says so. Decide where price belongs before launch.
-5. **Payment.** No checkout. Wire Stripe Payment Links when you're ready.
+4. **Price.** Stated twice — under the how-it-works steps and beneath the
+   closing CTA — and driven by `NEXT_PUBLIC_PRICE` so it can't drift out of sync
+   with what Stripe charges. Still no pricing *section*: a memorial page
+   shouldn't read as a store.
+5. **Payment.** Wired — see "Taking payments" above. It needs one environment
+   variable and no code.
 6. Update the address in `components/site/Footer.tsx` and `SITE` in
    `app/layout.tsx`.
 

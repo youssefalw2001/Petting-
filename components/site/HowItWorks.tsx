@@ -1,4 +1,5 @@
 import { STEPS, DETAILS } from "@/lib/content";
+import { PRICE } from "@/lib/config";
 
 /**
  * Three steps on hairlines, with the personalisation line absorbed into the
@@ -49,6 +50,15 @@ export default function HowItWorks() {
             </li>
           ))}
         </ol>
+
+        <p
+          data-reveal
+          className="mx-auto mt-10 max-w-3xl text-[0.9375rem] text-low"
+        >
+          {PRICE} for the song, delivered within 48 hours. You tell us about them
+          first — nothing is charged until you&rsquo;ve done that and seen what
+          you&rsquo;re paying for.
+        </p>
       </div>
     </section>
   );

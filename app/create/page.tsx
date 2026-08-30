@@ -32,8 +32,9 @@ export default function CreatePage() {
 
       <footer className="shell pb-10">
         <p className="mx-auto max-w-xl text-[0.8125rem] leading-relaxed text-low">
-          Nothing is charged yet. What you write stays between us, and is never
-          shared without your permission.
+          Nothing is charged while you fill this in. What you write stays between
+          us and is never shared without your permission. Payment is handled by
+          Stripe — we never see your card details.
         </p>
       </footer>
     </div>
