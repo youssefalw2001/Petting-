@@ -57,6 +57,13 @@ the cheapest thing that stops large flat ivory areas reading as blank screen
 rather than paper, and it ties the photographs to the background because they
 share the same texture. The first pass omitted it and the page read as plain.
 
+**The songs are real.** Four ACE-Step generations, 40–55 seconds, hand-written
+lyrics drawn from the same detail as the line of copy under each one. Four
+separate arrangements rather than four passes at the same one — the point of an
+examples section is to show range, and a single sound repeated four times would
+argue the opposite. Regenerate them from `src/scripts/site-examples.ts` in the
+[Song23](https://github.com/youssefalw2001/Song23) repo.
+
 **Photography carries the page.** The hero image is full-bleed and tall — inside
 the shell with margins and a corner radius it read as a document rather than a
 place. Examples are large portraits, not thumbnails; at 88px the animal was a
@@ -118,9 +125,17 @@ missing env var or a failed request.
    reviews break the FTC rule on consumer testimonials. The notice is
    deliberately not hidden behind an env check — that would ship fabricated
    quotes to production with nothing to warn you.
-3. **Songs.** `public/songs/*.wav` are generated demonstrations and the player
-   says so. Swap in real songs, update `src` and `length` in `lib/content.ts`,
-   and remove the note.
+3. **Songs.** `public/songs/*.mp3` are four real ACE-Step generations with
+   hand-written lyrics — made by [Song23](https://github.com/youssefalw2001/Song23),
+   `src/scripts/site-examples.ts`, which is where the briefs live if you want to
+   regenerate them. Each is a deliberately different record (guitar/male,
+   piano/female, nylon-and-fiddle, pedal steel with the only drums of the four),
+   because four ballads at one tempo would imply the service fills in a template.
+
+   The player still says they are demonstrations, and **that notice stays until
+   real customers' songs replace them, with written permission.** Being
+   AI-generated is not the part that would make it dishonest; claiming a song
+   belonged to a family who never sent it in would be.
 4. **Price.** There is no pricing section — the brief asked for a memorial
    experience, not a store. Nothing on the page states a price and nothing is
    charged; the flow says so. Decide where price belongs before launch.

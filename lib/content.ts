@@ -48,12 +48,25 @@ export type Song = {
 };
 
 /**
- * Demonstration tracks, generated — not customer work.
+ * Demonstration tracks — real songs, but not customer work.
  *
- * The site says so plainly wherever they play. Presenting a synthesised
- * placeholder as a real family's song would be a lie told to grieving people,
- * and the moment there are real songs (with written permission) these get
- * replaced and the notice comes out.
+ * These are genuine ACE-Step generations with hand-written lyrics, not the
+ * synthesised tones that used to sit here. Each is deliberately a different
+ * record: fingerpicked guitar and a male voice, felt piano and a female one,
+ * nylon strings and a fiddle, pedal steel and the only brushed drums of the four.
+ * Four ballads at one tempo in one key would imply the service fills in a
+ * template, which is the opposite of what it sells.
+ *
+ * The words come from the same detail as the `line` beneath each one — thirteen
+ * years and the bed he never used, eleven years of listening for the car, sixteen
+ * years one step behind, four houses and three cities. The copy and the song
+ * should tell the same story.
+ *
+ * The player still says these are demonstrations, and that notice stays until
+ * there are real customers' songs here with written permission. Presenting a
+ * generated example as a real family's song would be a lie told to grieving
+ * people. Being AI-generated is not the part that would make it a lie; claiming
+ * it belonged to someone is.
  */
 export const FEATURED: Song = {
   id: "buddy",
@@ -61,9 +74,9 @@ export const FEATURED: Song = {
   title: "You Were Always Home",
   photo: "buddy",
   line: "Thirteen years, and he never once slept in the bed they bought him.",
-  src: "/songs/buddy.wav",
+  src: "/songs/buddy.mp3",
   seed: 7,
-  length: 12,
+  length: 55,
 };
 
 export const EXAMPLES: Song[] = [
@@ -73,9 +86,9 @@ export const EXAMPLES: Song[] = [
     title: "Wait For Me At The Door",
     photo: "milo",
     line: "He met them at the door every single day for eleven years.",
-    src: "/songs/milo.wav",
+    src: "/songs/milo.mp3",
     seed: 23,
-    length: 12,
+    length: 45,
   },
   {
     id: "luna",
@@ -83,9 +96,9 @@ export const EXAMPLES: Song[] = [
     title: "My Little Shadow",
     photo: "luna",
     line: "Sixteen years of following her from room to room, one step behind.",
-    src: "/songs/luna.wav",
+    src: "/songs/luna.mp3",
     seed: 41,
-    length: 12,
+    length: 40,
   },
   {
     id: "charlie",
@@ -93,9 +106,9 @@ export const EXAMPLES: Song[] = [
     title: "Home Was Wherever You Were",
     photo: "charlie",
     line: "Four houses, three cities. He settled into every one of them first.",
-    src: "/songs/charlie.wav",
+    src: "/songs/charlie.mp3",
     seed: 59,
-    length: 12,
+    length: 50,
   },
 ];
 
