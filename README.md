@@ -132,7 +132,7 @@ links to it.
    the activation steps. You can do this as an individual — a company isn't
    required in most countries.
 2. **Product catalogue → Add product.** Name it (e.g. "A song for your pet"),
-   set a **one-time** price of $97, save.
+   set a **one-time** price of $59, save.
 3. **Payment Links → Create link**, choose that product, and under *After
    payment* set a confirmation message such as: *"Thank you. We're writing their
    song now — you'll hear from us within 48 hours."*
@@ -144,7 +144,7 @@ links to it.
 env:
   NEXT_PUBLIC_BASE_PATH: /Petting-
   NEXT_PUBLIC_STRIPE_LINK: https://buy.stripe.com/xxxxxxxx
-  NEXT_PUBLIC_PRICE: "$97"
+  NEXT_PUBLIC_PRICE: "$59"
 ```
 
 Locally, put the same two lines in `.env.local`.
@@ -177,7 +177,12 @@ links can end up in unexpected places.
 ### Worth knowing
 
 - Stripe's standard rate is **2.9% + 30¢** per successful card charge in the US,
-  so about **$3.11** on $97. Verify current pricing for your country.
+  so about **$2.01** on $59 — you keep roughly **$56.99**. Verify current pricing
+  for your country.
+- Set a **statement descriptor** in Settings → Business → Public details.
+  Something like `TAILSWEREMEMBER`. If a charge shows up on a card statement as
+  an unrecognisable string, people dispute it — and a dispute costs more than the
+  order was worth.
 - Payouts arrive on a rolling schedule once your account is activated.
 - Turn on **Stripe Tax** if you need VAT or sales tax handled.
 - Test with a card in test mode first: `4242 4242 4242 4242`, any future expiry,

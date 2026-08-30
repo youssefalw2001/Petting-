@@ -15,7 +15,7 @@
 export const STRIPE_LINK = process.env.NEXT_PUBLIC_STRIPE_LINK ?? "";
 
 /** Displayed price. Must match the Payment Link's price in Stripe. */
-export const PRICE = process.env.NEXT_PUBLIC_PRICE ?? "$97";
+export const PRICE = process.env.NEXT_PUBLIC_PRICE ?? "$59";
 
 export const PAYMENTS_LIVE = STRIPE_LINK.length > 0;
 

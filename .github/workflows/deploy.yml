@@ -45,7 +45,7 @@ jobs:
           # This is a PUBLIC url by design, the same thing you'd put in an
           # Instagram bio. Never put a secret key (sk_live_...) in this file.
           NEXT_PUBLIC_STRIPE_LINK: ""
-          NEXT_PUBLIC_PRICE: "$97"
+          NEXT_PUBLIC_PRICE: "$59"
         run: npm run build
 
       - name: Fail if _next is missing
