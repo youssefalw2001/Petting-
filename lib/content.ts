@@ -50,13 +50,19 @@ export type Song = {
 /**
  * Demonstration tracks — real songs, but not customer work.
  *
- * These are genuine ACE-Step generations with hand-written lyrics, not the
- * twelve-second synthesised tones that used to sit here. Each is deliberately a
- * different record: fingerpicked steel-string for Buddy, gospel-soul with a
- * Hammond organ for Milo, resonator slide blues for Luna, pedal steel and the
- * only brushed drums of the four for Charlie. Four ballads at one tempo in one
- * key would imply the service fills in a template, which is the opposite of what
- * it sells.
+ * Real songs with hand-written lyrics, not the twelve-second synthesised tones
+ * that used to sit here. Each is deliberately a different record: fingerpicked
+ * steel-string for Buddy, indie folk with upright piano for Milo, resonator slide
+ * blues for Luna, pedal steel and the only brushed drums of the four for Charlie.
+ * Four ballads at one tempo in one key would imply the service fills in a
+ * template, which is the opposite of what it sells.
+ *
+ * Three came from ACE-Step via the Song23 service. Milo came from Mureka, made by
+ * hand rather than through the pipeline, and it is the best of the four — which is
+ * worth being honest about rather than hiding: a person choosing a model and
+ * iterating beat the automated path. Its lyrics are also better than anything the
+ * template produced. "I see the spot where the carpet thins, where every afternoon
+ * begins" is the standard the songwriting layer should be measured against.
  *
  * Milo and Luna were replaced once. The first pair had a metallic ringing that
  * read immediately as machine-made, and the cause was in the prompt rather than
@@ -100,12 +106,23 @@ export const EXAMPLES: Song[] = [
   {
     id: "milo",
     pet: "Milo",
-    title: "Wait For Me At The Door",
+    /**
+     * The song's own title, not one written for it. Made on Mureka rather than
+     * ACE-Step, and it happens to land on the same two details as the line below
+     * it — eleven years, and the front door.
+     */
+    title: "Eleven Years at the Front Door",
     photo: "milo",
     line: "He met them at the door every single day for eleven years.",
     src: "/songs/milo.mp3",
     seed: 23,
-    length: 45,
+    /**
+     * 3:23, where the other three are under a minute. That is not a mistake: it
+     * is a whole song rather than an excerpt, which is a better answer to "what do
+     * I actually receive" than a forty-five second clip. It also costs 6.2MB
+     * against 0.7MB, which is the trade.
+     */
+    length: 203,
   },
   {
     id: "luna",
