@@ -104,7 +104,7 @@ export const STEPS: Step[] = [
     kind: "photos",
     id: "photos",
     question: "Do you have photos of them?",
-    help: "Optional, and you can always send them later — we'll ask again in our reply.",
+    help: "Pick them now if you like — you'll attach them to your reply once we write back, so this just tells us what to expect.",
     required: false,
   },
   {

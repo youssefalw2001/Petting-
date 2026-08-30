@@ -66,7 +66,10 @@ export default function CreateFlow() {
         ? files.map((f) => f.name).join(", ")
         : "none — to follow by email",
     };
-    payload.subject = `Song request ${ref} — ${a.petName || "unnamed"}`;
+    // Trimmed: the name lands in an email subject line, and nothing stops
+    // someone pasting a paragraph into that field.
+    const shortName = (a.petName || "unnamed").trim().slice(0, 40);
+    payload.subject = `Song request ${ref} — ${shortName}`;
     payload.summary = summarise(payload);
 
     if (!ENDPOINT) {
@@ -77,36 +80,50 @@ export default function CreateFlow() {
 
     setState("sending");
     try {
-      let res: Response;
+      /**
+       * Always JSON, never multipart.
+       *
+       * The earlier version switched to multipart whenever photos were chosen so
+       * attachments could ride along. Per Web3Forms' API reference, `attachment`
+       * is a PRO feature — on the free plan that request is liable to fail, and
+       * a failure here drops someone onto the copy-and-paste fallback instead of
+       * quietly emailing their story. Reliable delivery of the words matters far
+       * more than carrying the images: photographs are collected by reply, which
+       * the confirmation says.
+       *
+       * `email` is deliberately in the payload — Web3Forms uses it as the
+       * reply-to address, so replying to the notification reaches the customer
+       * directly. That is exactly how you ask for the photographs.
+       */
+      const body: Record<string, string> = {
+        ...payload,
+        from_name: "Tails We Remember",
+      };
+      if (WEB3FORMS_KEY) body.access_key = WEB3FORMS_KEY;
 
-      if (files.length) {
-        // Multipart so attachments can ride along where the endpoint supports
-        // them. Web3Forms' free tier does not, which is why the confirmation
-        // still asks for photos by reply.
-        const fd = new FormData();
-        Object.entries(payload).forEach(([k, v]) => fd.append(k, v));
-        if (WEB3FORMS_KEY) fd.append("access_key", WEB3FORMS_KEY);
-        files.forEach((f, n) => fd.append(`photo_${n + 1}`, f));
-        res = await fetch(ENDPOINT, { method: "POST", body: fd });
-      } else {
-        const body: Answers = { ...payload };
-        if (WEB3FORMS_KEY) body.access_key = WEB3FORMS_KEY;
-        res = await fetch(ENDPOINT, {
-          method: "POST",
-          headers: { "Content-Type": "application/json", Accept: "application/json" },
-          body: JSON.stringify(body),
-        });
+      const res = await fetch(ENDPOINT, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+        body: JSON.stringify(body),
+      });
+
+      // A 200 can still carry success:false, so the status alone isn't enough.
+      const json = await res.json().catch(() => null);
+      if (!res.ok || (json && json.success === false)) {
+        throw new Error(json?.message ?? String(res.status));
       }
 
-      if (!res.ok) throw new Error(String(res.status));
       setA(payload);
       setState("done");
     } catch {
-      // Never lose what someone just wrote to a network error.
+      // Never lose what someone just wrote to a network or provider error.
       setA(payload);
       setState("manual");
     }
-  }, [a, files]);
+  }, [a, files, ref]);
 
   const next = useCallback(() => {
     if (missing) return setError(missing);
@@ -400,6 +417,10 @@ function Field({
             ? `${files.length} photo${files.length > 1 ? "s" : ""} chosen`
             : "Choose photos"}
         </button>
+        <p className="mt-3 text-[0.8125rem] leading-relaxed text-low">
+          Attach these to your reply when we write back — photographs travel by
+          email, not through this page.
+        </p>
         {files.length > 0 && (
           <ul className="mt-4 flex flex-col gap-1.5">
             {files.map((f) => (

@@ -46,6 +46,16 @@ jobs:
           # Instagram bio. Never put a secret key (sk_live_...) in this file.
           NEXT_PUBLIC_STRIPE_LINK: "https://buy.stripe.com/00wfZh4yD7fQ5pNbk4fbq00"
           NEXT_PUBLIC_PRICE: "$59"
+
+          # Web3Forms — emails each order to you. Get a free key in 30 seconds
+          # at https://web3forms.com (enter your email, they send the key back).
+          # 250 submissions/month free. Leaving the key empty is safe: the flow
+          # falls back to a copy-and-email screen instead.
+          #
+          # The key is a public form ID, not a secret — it only permits sending
+          # mail to the address it was created for.
+          NEXT_PUBLIC_FORM_ENDPOINT: "https://api.web3forms.com/submit"
+          NEXT_PUBLIC_WEB3FORMS_KEY: ""
         run: npm run build
 
       - name: Fail if _next is missing

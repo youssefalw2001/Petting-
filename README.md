@@ -102,21 +102,38 @@ Only three things are required — their name, one memory, and an email. Someone
 writing this two days after losing their dog shouldn't be blocked by a validation
 error about music genre.
 
-Static export means no server, so it posts from the browser:
+Static export means no server, so the order posts straight from the browser to
+**Web3Forms**, which emails it to you. 250 submissions a month, free, no account.
+
+Get a key at [web3forms.com](https://web3forms.com) — enter your email and they
+send it back. Then set it in the deploy workflow (or `.env.local` locally):
 
 ```bash
-# .env.local
 NEXT_PUBLIC_FORM_ENDPOINT=https://api.web3forms.com/submit
 NEXT_PUBLIC_WEB3FORMS_KEY=your-access-key
 ```
 
-Photos post as multipart when files are chosen. Web3Forms' free tier doesn't
-accept attachments, which is why the confirmation also invites people to reply
-to the email with them.
+The key is a public form ID, not a secret — it only permits sending mail to the
+address it was created for, so it's safe to commit.
 
-**With no endpoint configured it still works** — it falls back to a formatted
-summary with a copy button and a mailto link. Nobody's answers are lost to a
-missing env var or a failed request.
+**Reply-to is wired.** The customer's address is sent as `email`, which
+Web3Forms uses as the reply-to, so hitting reply on the notification reaches them
+directly. That's how you ask for the photographs.
+
+**The request is always JSON, never multipart.** An earlier version switched to
+multipart when photos were chosen so attachments could ride along, but
+`attachment` is a Web3Forms PRO feature — on the free plan that request can fail,
+and a failure here drops the customer onto the copy-and-paste fallback instead of
+quietly emailing you their story. Delivering the words reliably matters much more
+than carrying the images, so photographs are collected by reply and the flow says
+so.
+
+Response handling checks `success` in the body as well as the HTTP status, since
+a 200 can still carry `success: false`.
+
+**With no key configured it still works** — the flow falls back to a formatted
+summary with a copy button and a mailto link, and still offers payment. Nobody's
+answers are lost to a missing env var or a failed request.
 
 ## Taking payments
 
