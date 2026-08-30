@@ -239,9 +239,18 @@ Vercel, which is a deploy change rather than a rewrite.
    is treated by payment processors as grounds for termination. `<Promise />`
    holds that ground in the meantime with four commitments that are actually
    true. The fastest honest route to real quotes is the free-song giveaway.
-3. **Songs.** `public/songs/*.wav` are generated demonstrations and the player
-   says so. Swap in real songs, update `src` and `length` in `lib/content.ts`,
-   and remove the note.
+3. **Songs.** `public/songs/*.mp3` are four real ACE-Step generations, 40–55
+   seconds, with hand-written lyrics — no longer the twelve-second synthesised
+   tones. The briefs live in [Song23](https://github.com/youssefalw2001/Song23) at
+   `src/scripts/site-examples.ts`, which is where you regenerate them. Each is a
+   deliberately different arrangement (guitar/male, piano/female,
+   nylon-and-fiddle, pedal steel with the only drums of the four), because four
+   ballads at one tempo would imply the service fills in a template.
+
+   The player still says they are demonstrations, and **that notice stays until
+   real customers' songs replace them, with written permission.** Being
+   AI-generated is not what would make it dishonest; claiming a song belonged to
+   a family who never sent it in would be.
 4. **Price.** Stated twice — under the how-it-works steps and beneath the
    closing CTA — and driven by `NEXT_PUBLIC_PRICE` so it can't drift out of sync
    with what Stripe charges. Still no pricing *section*: a memorial page
