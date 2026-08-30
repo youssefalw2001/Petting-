@@ -52,10 +52,25 @@ export type Song = {
  *
  * These are genuine ACE-Step generations with hand-written lyrics, not the
  * twelve-second synthesised tones that used to sit here. Each is deliberately a
- * different record: fingerpicked guitar and a male voice, felt piano and a female
- * one, nylon strings and a fiddle, pedal steel and the only brushed drums of the
- * four. Four ballads at one tempo in one key would imply the service fills in a
- * template, which is the opposite of what it sells.
+ * different record: fingerpicked steel-string for Buddy, gospel-soul with a
+ * Hammond organ for Milo, resonator slide blues for Luna, pedal steel and the
+ * only brushed drums of the four for Charlie. Four ballads at one tempo in one
+ * key would imply the service fills in a template, which is the opposite of what
+ * it sells.
+ *
+ * Milo and Luna were replaced once. The first pair had a metallic ringing that
+ * read immediately as machine-made, and the cause was in the prompt rather than
+ * the model: one asked for a "wide warm room" — reverb, in as many words — and
+ * the other for "hushed close harmonies", which is a doubled vocal, and doubling
+ * comes back with phase artefacts. Both said "breathy", which arrives as
+ * sibilance. Every caption now states the absence outright: dry, close-miked, no
+ * reverb, no echo, single tracked vocal, no harmonies.
+ *
+ * A consequence worth knowing rather than discovering: all four now have male
+ * vocals. The two that rang were the two female ones, and the replacements chosen
+ * by ear were both male. A dry female vocal was generated and offered; it lost on
+ * sound. If range across the four ever matters more than that, this is the thing
+ * to revisit.
  *
  * The words come from the same detail as the `line` beneath each one — thirteen
  * years and the bed he never used, eleven years of listening for the car, sixteen

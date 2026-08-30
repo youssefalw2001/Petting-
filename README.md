@@ -243,9 +243,17 @@ Vercel, which is a deploy change rather than a rewrite.
    seconds, with hand-written lyrics — no longer the twelve-second synthesised
    tones. The briefs live in [Song23](https://github.com/youssefalw2001/Song23) at
    `src/scripts/site-examples.ts`, which is where you regenerate them. Each is a
-   deliberately different arrangement (guitar/male, piano/female,
-   nylon-and-fiddle, pedal steel with the only drums of the four), because four
-   ballads at one tempo would imply the service fills in a template.
+   deliberately different arrangement — fingerpicked steel-string, gospel-soul
+   Hammond, resonator slide blues, and pedal steel with the only drums of the four
+   — because four ballads at one tempo would imply the service fills in a template.
+
+   Milo and Luna were replaced once. The originals had a metallic ring that read
+   as machine-made, and the cause was the prompt: one asked for a "wide warm room"
+   (reverb, spelled out) and the other for "hushed close harmonies" (a doubled
+   vocal, which phases). Captions now say `dry, close-miked, no reverb, no echo,
+   single tracked vocal, no harmonies` explicitly. **If a generated vocal ever
+   sounds artificial, look for space and layering in the caption before blaming
+   the model.**
 
    The player still says they are demonstrations, and **that notice stays until
    real customers' songs replace them, with written permission.** Being
