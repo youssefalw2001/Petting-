@@ -1,0 +1,301 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>Reel — message thread</title>
+<!--
+  INTERNAL TOOL. Not linked from the site, noindex, safe to delete.
+
+  A 1080×1920 message thread that animates itself, built to be screen-recorded
+  rather than exported. Reason: every fake-iMessage generator looks like a fake
+  iMessage generator, and hand-keyframing fifteen text boxes in CapCut is an hour
+  you'd spend again for every variant. Editing the MESSAGES array below and
+  re-recording takes about two minutes.
+
+  HOW TO USE
+  1. Open in Chrome. Press R to record-ready (hides the controls), Space to play.
+  2. Screen-record the phone frame only. On macOS: Cmd+Shift+5, select the frame.
+     On Windows: Xbox Game Bar, or OBS with a window capture.
+  3. Drop the recording into CapCut, lay the audio under it, export 1080×1920.
+
+  Timings below are tuned so the last message lands exactly where the song's
+  outro says the name. If your audio cut is a different length, change SPEED.
+-->
+<style>
+  :root {
+    /* Same palette as the site, so the reel and the landing page feel like one
+       thing when someone taps through from the bio link. */
+    --page: #F7F3EE;
+    --ink: #24211F;
+    --muted: #6B655F;
+    --rose: #8A6153;
+    --line: #E4DCD3;
+    --sent: #2F2B28;      /* outgoing bubble — near-ink, not iMessage blue */
+    --sent-text: #F7F3EE;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0 }
+  body {
+    background: #16130f; min-height: 100vh;
+    display: flex; flex-direction: column; align-items: center; gap: 1.5rem;
+    padding: 2rem 1rem;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    color: #8b857e;
+  }
+
+  /* The recording target. Fixed 1080×1920, scaled to fit the screen so you can
+     see it, but the recording is of the real pixels — record at 100% (press F)
+     if your display can take it. */
+  #stage {
+    width: 1080px; height: 1920px;
+    transform-origin: top center;
+    background: var(--page);
+    position: relative; overflow: hidden;
+    flex: 0 0 auto;
+  }
+
+  /* Film grain, same trick the site uses, so stills don't read as flat digital. */
+  #stage::after {
+    content: ""; position: absolute; inset: 0; pointer-events: none; opacity: .05;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='3'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+
+  /* ── safe zones ────────────────────────────────────────────────────────────
+     Instagram's chrome covers roughly the top 220px and bottom 420px of a
+     1080×1920 reel. Everything that must be read lives between them. The guides
+     are toggleable (press G) and never recorded. */
+  .guide { position: absolute; left: 0; right: 0; background: rgba(200,60,60,.14);
+           border-block: 1px dashed rgba(200,60,60,.5); z-index: 99; display: none }
+  body.guides .guide { display: block }
+  .guide.top { top: 0; height: 220px }
+  .guide.bottom { bottom: 0; height: 420px }
+
+  /* ── thread header ─────────────────────────────────────────────────────── */
+  header {
+    position: absolute; top: 240px; left: 0; right: 0;
+    display: flex; flex-direction: column; align-items: center; gap: 18px;
+  }
+  .avatar {
+    width: 132px; height: 132px; border-radius: 50%; object-fit: cover;
+    background: var(--line); filter: saturate(.85) contrast(1.02);
+  }
+  .who { font-size: 42px; font-weight: 500; color: var(--ink); letter-spacing: -.01em }
+  .sub { font-size: 27px; color: var(--muted) }
+
+  /* ── the thread ────────────────────────────────────────────────────────── */
+  #thread {
+    position: absolute; top: 560px; left: 72px; right: 72px; bottom: 440px;
+    display: flex; flex-direction: column; justify-content: flex-end; gap: 22px;
+  }
+  .row { display: flex; justify-content: flex-end; opacity: 0; transform: translateY(26px) scale(.97);
+         animation: pop .42s cubic-bezier(.22,1,.36,1) forwards }
+  @keyframes pop { to { opacity: 1; transform: none } }
+  .bubble {
+    max-width: 78%; background: var(--sent); color: var(--sent-text);
+    font-size: 40px; line-height: 1.42; padding: 26px 34px;
+    border-radius: 34px 34px 8px 34px;
+  }
+  /* The one that has to land hardest gets a fraction more room around it. */
+  .row.beat { margin-top: 16px }
+  .row.beat .bubble { background: var(--rose) }
+
+  .stamp { position: absolute; right: 0; bottom: -34px; font-size: 24px; color: var(--muted) }
+  .rowwrap { position: relative; display: flex; justify-content: flex-end; width: 100% }
+
+  /* Typing indicator that never resolves into a reply — the whole device. */
+  .typing { display: flex; justify-content: flex-start; opacity: 0; animation: pop .4s forwards }
+  .typing .bubble { background: var(--line); border-radius: 34px 34px 34px 8px; padding: 30px 34px }
+  .dots { display: flex; gap: 12px }
+  .dots i { width: 15px; height: 15px; border-radius: 50%; background: var(--muted); display: block;
+            animation: blink 1.4s infinite }
+  .dots i:nth-child(2) { animation-delay: .2s }
+  .dots i:nth-child(3) { animation-delay: .4s }
+  @keyframes blink { 0%,60%,100% { opacity: .25 } 30% { opacity: 1 } }
+
+  /* ── the payoff card ───────────────────────────────────────────────────── */
+  #reveal {
+    position: absolute; inset: 0; background: var(--page); z-index: 50;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: 28px; padding: 0 100px; text-align: center; opacity: 0; pointer-events: none;
+  }
+  #reveal.on { animation: fadeIn .8s ease forwards }
+  @keyframes fadeIn { to { opacity: 1 } }
+  #reveal .line {
+    font-family: "Cormorant Garamond", Georgia, serif; font-weight: 300;
+    font-size: 76px; line-height: 1.18; color: var(--ink);
+  }
+  #reveal .quiet { font-size: 32px; color: var(--muted); letter-spacing: .02em }
+  #reveal .url { font-size: 30px; color: var(--rose); letter-spacing: .06em; margin-top: 20px }
+
+  /* ── controls (never recorded) ─────────────────────────────────────────── */
+  #ui { display: flex; gap: .6rem; flex-wrap: wrap; justify-content: center; max-width: 44rem }
+  body.recording #ui, body.recording #help { visibility: hidden }
+  button {
+    font: 500 .85rem/1 inherit; background: #2a2521; color: #e8e2da; border: 1px solid #3a342e;
+    border-radius: 4px; padding: .55rem .9rem; cursor: pointer;
+  }
+  button:hover { background: #3a342e }
+  #help { font-size: .78rem; line-height: 1.7; max-width: 44rem; text-align: center }
+  kbd { background: #2a2521; border: 1px solid #3a342e; border-radius: 3px; padding: .1rem .3rem;
+        font-size: .9em }
+</style>
+</head>
+<body class="guides">
+
+<div id="ui">
+  <button onclick="play()">▶ Play (Space)</button>
+  <button onclick="document.body.classList.toggle('guides')">Safe zones (G)</button>
+  <button onclick="document.body.classList.toggle('recording')">Hide controls (R)</button>
+  <button onclick="setScale(1)">100% (F)</button>
+  <button onclick="fit()">Fit</button>
+  <button onclick="setVariant(0)">Hook A</button>
+  <button onclick="setVariant(1)">Hook B</button>
+  <button onclick="setVariant(2)">Hook C</button>
+</div>
+
+<div id="stage">
+  <div class="guide top"></div>
+  <div class="guide bottom"></div>
+
+  <header>
+    <img class="avatar" id="avatar" src="photos/milo.jpg" alt="">
+    <div class="who" id="who">Milo</div>
+    <div class="sub" id="sub">Delivered — never read</div>
+  </header>
+
+  <div id="thread"></div>
+
+  <div id="reveal">
+    <div class="line" id="revealLine">Then it said his name.</div>
+    <div class="quiet">A song made from the things you don’t want to forget.</div>
+    <div class="url">tailsweremember.com</div>
+  </div>
+</div>
+
+<div id="help">
+  <kbd>Space</kbd> play · <kbd>G</kbd> safe zones · <kbd>R</kbd> hide controls · <kbd>F</kbd> 100%<br>
+  Record the ivory frame only. Timings are built for a ~21s audio cut; change <code>SPEED</code> in the source to stretch or compress.
+</div>
+
+<script>
+/* ────────────────────────────────────────────────────────────────────────────
+   THE SCRIPT
+
+   Every message is short on purpose. People read about three words a second on
+   a phone, slower when they're upset, and a bubble nobody finishes is a bubble
+   that did nothing. Nothing here is longer than nine words.
+
+   The order is the engine: sofa, dog food, his spot, the gate, the recall, the
+   apology, the gift. Mundane to devastating. Opening on grief gives the viewer
+   nowhere to go and they scroll; opening on a joke about a sofa earns the four
+   seconds you need to land the last one.
+
+   `at` is seconds from the start. `beat` marks the two that carry the reel —
+   they get extra space and the rose bubble.
+   ──────────────────────────────────────────────────────────────────────────── */
+const SPEED = 1;
+
+const MESSAGES = [
+  { at: 0.0,  text: "you'd hate the new sofa",                 stamp: "Tuesday 9:14" },
+  { at: 2.4,  text: "I still buy the small bags by accident" },
+  { at: 5.0,  text: "there's a plant in your spot now" },
+  { at: 7.4,  text: "it's not the same" },
+  { at: 9.6,  text: "I keep listening for the gate" },
+  { at: 12.2, text: "eleven years and I never had to call you twice" },
+  { at: 15.4, text: "I'm sorry I wasn't home that morning", beat: true },
+  { at: 18.4, text: "I made you something. I hope it's okay.", beat: true },
+];
+
+/* The typing indicator appears near the end and never resolves. That absence is
+   the point — a reply would break it. */
+const TYPING_AT = 20.4;
+const REVEAL_AT = 21.6;
+
+/* Three first-message variants. The shot list never changes; only the opening
+   line does. Post all three across a week and let the algorithm choose — that is
+   cheaper than guessing which hook works. */
+const HOOKS = [
+  "you'd hate the new sofa",
+  "I found your hair on my coat today",
+  "I still say goodnight out loud",
+];
+
+const thread = document.getElementById('thread');
+const reveal = document.getElementById('reveal');
+let timers = [];
+
+function clear() {
+  timers.forEach(clearTimeout);
+  timers = [];
+  thread.innerHTML = '';
+  reveal.classList.remove('on');
+}
+
+function addMessage(m) {
+  const wrap = document.createElement('div');
+  wrap.className = 'rowwrap';
+  const row = document.createElement('div');
+  row.className = 'row' + (m.beat ? ' beat' : '');
+  const bubble = document.createElement('div');
+  bubble.className = 'bubble';
+  bubble.textContent = m.text;
+  row.appendChild(bubble);
+  wrap.appendChild(row);
+  if (m.stamp) {
+    const s = document.createElement('div');
+    s.className = 'stamp';
+    s.textContent = m.stamp;
+    wrap.appendChild(s);
+  }
+  thread.appendChild(wrap);
+  // Keep the newest message anchored at the bottom, the way a real thread reads.
+  thread.scrollTop = thread.scrollHeight;
+}
+
+function addTyping() {
+  const t = document.createElement('div');
+  t.className = 'typing';
+  t.innerHTML = '<div class="bubble"><div class="dots"><i></i><i></i><i></i></div></div>';
+  thread.appendChild(t);
+}
+
+function play() {
+  clear();
+  for (const m of MESSAGES) {
+    timers.push(setTimeout(() => addMessage(m), m.at * 1000 * SPEED));
+  }
+  timers.push(setTimeout(addTyping, TYPING_AT * 1000 * SPEED));
+  timers.push(setTimeout(() => reveal.classList.add('on'), REVEAL_AT * 1000 * SPEED));
+}
+
+function setVariant(i) {
+  MESSAGES[0].text = HOOKS[i];
+  play();
+}
+
+/* Scale the 1080-wide stage down so it's visible on a normal display. Recording
+   at less than 100% costs real sharpness on text, so F is there for when you
+   have the screen for it. */
+function setScale(s) {
+  document.getElementById('stage').style.transform = `scale(${s})`;
+  document.getElementById('stage').style.marginBottom = `${-1920 * (1 - s)}px`;
+}
+function fit() {
+  const s = Math.min((window.innerHeight - 200) / 1920, (window.innerWidth - 80) / 1080);
+  setScale(Math.min(s, 1));
+}
+
+addEventListener('keydown', (e) => {
+  if (e.code === 'Space') { e.preventDefault(); play(); }
+  if (e.key.toLowerCase() === 'g') document.body.classList.toggle('guides');
+  if (e.key.toLowerCase() === 'r') document.body.classList.toggle('recording');
+  if (e.key.toLowerCase() === 'f') setScale(1);
+});
+
+addEventListener('resize', fit);
+fit();
+play();
+</script>
+</body>
+</html>
