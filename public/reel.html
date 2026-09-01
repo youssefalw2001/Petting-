@@ -84,9 +84,30 @@
   .sub { font-size: 27px; color: var(--muted) }
 
   /* ── the thread ────────────────────────────────────────────────────────── */
+  /*
+    `overflow: hidden` is load-bearing, not tidiness. The column is bottom-aligned
+    so each new message pushes the stack up, and once there are more messages than
+    fit, the overflow spills *upward* — straight over the avatar and the header,
+    with the oldest bubble half-cut in the middle of the name. Clipping at the top
+    edge instead gives the real behaviour: old messages slide off under a fade
+    while the header stays put.
+  */
   #thread {
-    position: absolute; top: 560px; left: 72px; right: 72px; bottom: 440px;
+    position: absolute; top: 620px; left: 72px; right: 72px; bottom: 440px;
     display: flex; flex-direction: column; justify-content: flex-end; gap: 22px;
+    overflow: hidden;
+    /* Softens the cut so a clipped bubble reads as "scrolled away" rather than
+       "broken layout". */
+    mask-image: linear-gradient(to bottom, transparent 0, #000 90px, #000 100%);
+    -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 90px, #000 100%);
+  }
+
+  /* One date line above the first message, the way a real thread opens. Replaces
+     a per-bubble timestamp, which collided with the bubble above it and added
+     nothing at this size. */
+  .datemark {
+    text-align: center; font-size: 24px; color: var(--muted); letter-spacing: .04em;
+    padding-bottom: 6px; opacity: 0; animation: pop .4s forwards;
   }
   .row { display: flex; justify-content: flex-end; opacity: 0; transform: translateY(26px) scale(.97);
          animation: pop .42s cubic-bezier(.22,1,.36,1) forwards }
@@ -100,8 +121,7 @@
   .row.beat { margin-top: 16px }
   .row.beat .bubble { background: var(--rose) }
 
-  .stamp { position: absolute; right: 0; bottom: -34px; font-size: 24px; color: var(--muted) }
-  .rowwrap { position: relative; display: flex; justify-content: flex-end; width: 100% }
+  .rowwrap { position: relative; display: flex; justify-content: flex-end; width: 100%; flex: 0 0 auto }
 
   /* Typing indicator that never resolves into a reply — the whole device. */
   .typing { display: flex; justify-content: flex-start; opacity: 0; animation: pop .4s forwards }
@@ -196,8 +216,12 @@
    ──────────────────────────────────────────────────────────────────────────── */
 const SPEED = 1;
 
+/* Sits above the first message. Vague on purpose — a specific date invites
+   arithmetic about how long ago, which is not what you want anyone doing. */
+const DATE_LABEL = "Today";
+
 const MESSAGES = [
-  { at: 0.0,  text: "you'd hate the new sofa",                 stamp: "Tuesday 9:14" },
+  { at: 0.0,  text: "you'd hate the new sofa" },
   { at: 2.4,  text: "I still buy the small bags by accident" },
   { at: 5.0,  text: "there's a plant in your spot now" },
   { at: 7.4,  text: "it's not the same" },
@@ -242,15 +266,9 @@ function addMessage(m) {
   bubble.textContent = m.text;
   row.appendChild(bubble);
   wrap.appendChild(row);
-  if (m.stamp) {
-    const s = document.createElement('div');
-    s.className = 'stamp';
-    s.textContent = m.stamp;
-    wrap.appendChild(s);
-  }
   thread.appendChild(wrap);
-  // Keep the newest message anchored at the bottom, the way a real thread reads.
-  thread.scrollTop = thread.scrollHeight;
+  // No scrollTop needed: the column is bottom-aligned and clipped at the top, so
+  // the newest message is always the one sitting on the baseline.
 }
 
 function addTyping() {
@@ -262,6 +280,10 @@ function addTyping() {
 
 function play() {
   clear();
+  const date = document.createElement('div');
+  date.className = 'datemark';
+  date.textContent = DATE_LABEL;
+  thread.appendChild(date);
   for (const m of MESSAGES) {
     timers.push(setTimeout(() => addMessage(m), m.at * 1000 * SPEED));
   }
