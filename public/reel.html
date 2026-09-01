@@ -4,317 +4,443 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="robots" content="noindex,nofollow">
-<title>Reel — message thread</title>
+<title>reel</title>
 <!--
-  INTERNAL TOOL. Not linked from the site, noindex, safe to delete.
+  INTERNAL TOOL. Not linked, noindex, safe to delete.
 
-  A 1080×1920 message thread that animates itself, built to be screen-recorded
-  rather than exported. Reason: every fake-iMessage generator looks like a fake
-  iMessage generator, and hand-keyframing fifteen text boxes in CapCut is an hour
-  you'd spend again for every variant. Editing the MESSAGES array below and
-  re-recording takes about two minutes.
+  A pixel-accurate iOS Messages thread that animates itself, built to be
+  screen-recorded.
+
+  WHY IT LOOKS LIKE NOTHING
+  The first version of this used the site's ivory palette, its serif headings, and
+  ended on a tagline and a URL. It read as an advertisement within about a quarter
+  of a second, because that is what those three things are for. Content that
+  travels in this niche looks like it fell off somebody's phone: native UI, no
+  brand, no call to action, and an ending that just stops.
+
+  The selling does not happen in the video. It happens in the comments, where
+  people ask what the song is, and in the bio link. A video that asks for the click
+  gets scrolled; a video that provokes the question gets a comment, and comments
+  are the ranking signal.
+
+  THE REVEAL IS DIEGETIC
+  The last message is an audio attachment. It gets tapped, the waveform fills, and
+  the song says the pet's name. The song exists inside the fiction rather than
+  being scored over the top of it, which is the difference between watching an ad
+  and overhearing something private.
 
   HOW TO USE
-  1. Open in Chrome. Press R to record-ready (hides the controls), Space to play.
-  2. Screen-record the phone frame only. On macOS: Cmd+Shift+5, select the frame.
-     On Windows: Xbox Game Bar, or OBS with a window capture.
-  3. Drop the recording into CapCut, lay the audio under it, export 1080×1920.
-
-  Timings below are tuned so the last message lands exactly where the song's
-  outro says the name. If your audio cut is a different length, change SPEED.
+  1. Chrome. Press R to hide the controls, Space to replay.
+  2. Screen-record the phone frame only.
+  3. In CapCut: lay the audio so the vocal name-drop lands on the waveform fill.
+  4. Export 1080×1920. Post with no on-screen CTA.
 -->
 <style>
-  :root {
-    /* Same palette as the site, so the reel and the landing page feel like one
-       thing when someone taps through from the bio link. */
-    --page: #F7F3EE;
-    --ink: #24211F;
-    --muted: #6B655F;
-    --rose: #8A6153;
-    --line: #E4DCD3;
-    --sent: #2F2B28;      /* outgoing bubble — near-ink, not iMessage blue */
-    --sent-text: #F7F3EE;
-  }
-  * { box-sizing: border-box; margin: 0; padding: 0 }
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-font-smoothing: antialiased }
   body {
-    background: #16130f; min-height: 100vh;
-    display: flex; flex-direction: column; align-items: center; gap: 1.5rem;
-    padding: 2rem 1rem;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-    color: #8b857e;
+    background: #0b0b0c; min-height: 100vh; display: flex; flex-direction: column;
+    align-items: center; gap: 1.25rem; padding: 1.5rem 1rem;
+    font: 400 14px/1.6 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    color: #7d7a76;
   }
 
-  /* The recording target. Fixed 1080×1920, scaled to fit the screen so you can
-     see it, but the recording is of the real pixels — record at 100% (press F)
-     if your display can take it. */
+  /* ── the recording target ───────────────────────────────────────────────── */
   #stage {
-    width: 1080px; height: 1920px;
-    transform-origin: top center;
-    background: var(--page);
-    position: relative; overflow: hidden;
-    flex: 0 0 auto;
+    width: 1080px; height: 1920px; transform-origin: top center; flex: 0 0 auto;
+    background: #000; position: relative; overflow: hidden;
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, sans-serif;
   }
 
-  /* Film grain, same trick the site uses, so stills don't read as flat digital. */
-  #stage::after {
-    content: ""; position: absolute; inset: 0; pointer-events: none; opacity: .05;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='3'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)'/%3E%3C/svg%3E");
+  /*
+    A very slight, very slow drift. Real screen recordings are held in a hand and
+    a perfectly static frame is one of the strongest tells that something was
+    designed rather than captured. Two pixels of movement over twenty seconds is
+    enough for the eye and small enough that nobody notices it consciously.
+  */
+  #phone {
+    position: absolute; inset: 0; background: #000;
+    animation: drift 24s ease-in-out infinite alternate;
+  }
+  @keyframes drift {
+    from { transform: translate3d(0,0,0) scale(1) }
+    to   { transform: translate3d(-3px,-5px,0) scale(1.004) }
+  }
+  body.nodrift #phone { animation: none }
+
+  /* ── iOS status bar ────────────────────────────────────────────────────── */
+  .status {
+    height: 132px; display: flex; align-items: flex-end; justify-content: space-between;
+    padding: 0 62px 14px; color: #fff; font-size: 40px; font-weight: 600;
+    letter-spacing: -.01em; position: relative; z-index: 3;
+  }
+  .status .right { display: flex; align-items: center; gap: 14px }
+  .bars { display: flex; align-items: flex-end; gap: 5px; height: 30px }
+  .bars i { width: 7px; background: #fff; border-radius: 2px; display: block }
+  .bars i:nth-child(1) { height: 11px } .bars i:nth-child(2) { height: 17px }
+  .bars i:nth-child(3) { height: 23px } .bars i:nth-child(4) { height: 29px }
+  .batt {
+    width: 62px; height: 30px; border: 3px solid rgba(255,255,255,.5); border-radius: 9px;
+    position: relative; padding: 3px;
+  }
+  .batt::after {
+    content: ""; position: absolute; right: -8px; top: 9px; width: 4px; height: 12px;
+    background: rgba(255,255,255,.5); border-radius: 0 3px 3px 0;
+  }
+  .batt span { display: block; height: 100%; background: #fff; border-radius: 5px }
+  /* The notch. Present because its absence is noticeable. */
+  .notch {
+    position: absolute; top: 34px; left: 50%; transform: translateX(-50%);
+    width: 340px; height: 96px; background: #000; border-radius: 48px; z-index: 4;
   }
 
-  /* ── safe zones ────────────────────────────────────────────────────────────
-     Instagram's chrome covers roughly the top 220px and bottom 420px of a
-     1080×1920 reel. Everything that must be read lives between them. The guides
-     are toggleable (press G) and never recorded. */
-  .guide { position: absolute; left: 0; right: 0; background: rgba(200,60,60,.14);
-           border-block: 1px dashed rgba(200,60,60,.5); z-index: 99; display: none }
-  body.guides .guide { display: block }
-  .guide.top { top: 0; height: 220px }
-  .guide.bottom { bottom: 0; height: 420px }
-
-  /* ── thread header ─────────────────────────────────────────────────────── */
-  header {
-    position: absolute; top: 240px; left: 0; right: 0;
-    display: flex; flex-direction: column; align-items: center; gap: 18px;
+  /* ── iOS nav bar ───────────────────────────────────────────────────────── */
+  .nav {
+    background: rgba(28,28,30,.82); backdrop-filter: blur(20px);
+    border-bottom: 1px solid rgba(255,255,255,.09);
+    padding: 10px 40px 22px; display: grid; grid-template-columns: 90px 1fr 90px;
+    align-items: center; position: relative; z-index: 3;
   }
-  .avatar {
-    width: 132px; height: 132px; border-radius: 50%; object-fit: cover;
-    background: var(--line); filter: saturate(.85) contrast(1.02);
+  .chev { width: 34px; height: 34px; border-left: 6px solid #0a7cff; border-bottom: 6px solid #0a7cff;
+          transform: rotate(45deg); margin-left: 10px }
+  .who { display: flex; flex-direction: column; align-items: center; gap: 9px }
+  .who img {
+    width: 108px; height: 108px; border-radius: 50%; object-fit: cover; background: #2c2c2e;
   }
-  .who { font-size: 42px; font-weight: 500; color: var(--ink); letter-spacing: -.01em }
-  .sub { font-size: 27px; color: var(--muted) }
+  .who .name { color: #fff; font-size: 33px; font-weight: 400; letter-spacing: -.01em;
+               display: flex; align-items: center; gap: 10px }
+  .who .name svg { width: 20px; height: 20px; opacity: .45 }
+  .facetime { width: 52px; height: 34px; border: 4px solid #0a7cff; border-radius: 10px;
+              justify-self: end; position: relative }
+  .facetime::after { content: ""; position: absolute; right: -18px; top: 3px;
+    border-top: 10px solid transparent; border-bottom: 10px solid transparent;
+    border-left: 16px solid #0a7cff }
 
   /* ── the thread ────────────────────────────────────────────────────────── */
-  /*
-    `overflow: hidden` is load-bearing, not tidiness. The column is bottom-aligned
-    so each new message pushes the stack up, and once there are more messages than
-    fit, the overflow spills *upward* — straight over the avatar and the header,
-    with the oldest bubble half-cut in the middle of the name. Clipping at the top
-    edge instead gives the real behaviour: old messages slide off under a fade
-    while the header stays put.
-  */
   #thread {
-    position: absolute; top: 620px; left: 72px; right: 72px; bottom: 440px;
-    display: flex; flex-direction: column; justify-content: flex-end; gap: 22px;
-    overflow: hidden;
-    /* Softens the cut so a clipped bubble reads as "scrolled away" rather than
-       "broken layout". */
-    mask-image: linear-gradient(to bottom, transparent 0, #000 90px, #000 100%);
-    -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 90px, #000 100%);
+    position: absolute; top: 300px; bottom: 260px; left: 0; right: 0;
+    padding: 0 40px; display: flex; flex-direction: column; justify-content: flex-end;
+    gap: 12px; overflow: hidden;
+    mask-image: linear-gradient(to bottom, transparent 0, #000 110px, #000 100%);
+    -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 110px, #000 100%);
+    z-index: 2;
+  }
+  .divider {
+    text-align: center; color: #8e8e93; font-size: 28px; font-weight: 600; padding: 18px 0 8px;
+    opacity: 0; animation: fade .3s forwards;
+  }
+  .divider b { color: #8e8e93; font-weight: 400 }
+
+  .row { display: flex; justify-content: flex-end; flex: 0 0 auto; opacity: 0;
+         transform: translateY(22px); animation: send .34s cubic-bezier(.2,.9,.3,1) forwards }
+  @keyframes send { to { opacity: 1; transform: none } }
+  @keyframes fade { to { opacity: 1 } }
+
+  .b {
+    max-width: 74%; font-size: 41px; line-height: 1.34; padding: 22px 32px 24px;
+    border-radius: 44px; position: relative; letter-spacing: -.015em;
+    /* iMessage blue is a vertical gradient, not a flat fill. Flat is the tell. */
+    background: linear-gradient(#25a3ff, #0a7cff); color: #fff;
+  }
+  /* The tail. Drawn rather than a border-radius trick so it matches the real shape. */
+  .row:last-of-type .b::after,
+  .row.tail .b::after {
+    content: ""; position: absolute; right: -8px; bottom: 0; width: 34px; height: 34px;
+    background: #0a7cff;
+    -webkit-mask-image: radial-gradient(circle at 100% 0, transparent 34px, #000 35px);
+    mask-image: radial-gradient(circle at 100% 0, transparent 34px, #000 35px);
+    border-bottom-left-radius: 20px;
   }
 
-  /* One date line above the first message, the way a real thread opens. Replaces
-     a per-bubble timestamp, which collided with the bubble above it and added
-     nothing at this size. */
-  .datemark {
-    text-align: center; font-size: 24px; color: var(--muted); letter-spacing: .04em;
-    padding-bottom: 6px; opacity: 0; animation: pop .4s forwards;
-  }
-  .row { display: flex; justify-content: flex-end; opacity: 0; transform: translateY(26px) scale(.97);
-         animation: pop .42s cubic-bezier(.22,1,.36,1) forwards }
-  @keyframes pop { to { opacity: 1; transform: none } }
-  .bubble {
-    max-width: 78%; background: var(--sent); color: var(--sent-text);
-    font-size: 40px; line-height: 1.42; padding: 26px 34px;
-    border-radius: 34px 34px 8px 34px;
-  }
-  /* The one that has to land hardest gets a fraction more room around it. */
-  .row.beat { margin-top: 16px }
-  .row.beat .bubble { background: var(--rose) }
+  .delivered { text-align: right; color: #8e8e93; font-size: 25px; padding: 4px 12px 0;
+               opacity: 0; animation: fade .4s forwards }
 
-  .rowwrap { position: relative; display: flex; justify-content: flex-end; width: 100%; flex: 0 0 auto }
-
-  /* Typing indicator that never resolves into a reply — the whole device. */
-  .typing { display: flex; justify-content: flex-start; opacity: 0; animation: pop .4s forwards }
-  .typing .bubble { background: var(--line); border-radius: 34px 34px 34px 8px; padding: 30px 34px }
-  .dots { display: flex; gap: 12px }
-  .dots i { width: 15px; height: 15px; border-radius: 50%; background: var(--muted); display: block;
-            animation: blink 1.4s infinite }
-  .dots i:nth-child(2) { animation-delay: .2s }
-  .dots i:nth-child(3) { animation-delay: .4s }
-  @keyframes blink { 0%,60%,100% { opacity: .25 } 30% { opacity: 1 } }
-
-  /* ── the payoff card ───────────────────────────────────────────────────── */
-  #reveal {
-    position: absolute; inset: 0; background: var(--page); z-index: 50;
-    display: flex; flex-direction: column; align-items: center; justify-content: center;
-    gap: 28px; padding: 0 100px; text-align: center; opacity: 0; pointer-events: none;
+  /* ── the audio message ─────────────────────────────────────────────────── */
+  /*
+    The payoff. An iOS audio attachment, tapped, with the waveform filling in real
+    time. It makes the song a thing inside the story rather than a soundtrack laid
+    over it — which is the whole difference between overhearing something and being
+    advertised at.
+  */
+  .audio { display: flex; align-items: center; gap: 26px; min-width: 620px; padding: 26px 34px }
+  .audio .play {
+    width: 66px; height: 66px; border-radius: 50%; background: #fff; flex: 0 0 auto;
+    display: grid; place-items: center; position: relative;
   }
-  #reveal.on { animation: fadeIn .8s ease forwards }
-  @keyframes fadeIn { to { opacity: 1 } }
-  #reveal .line {
-    font-family: "Cormorant Garamond", Georgia, serif; font-weight: 300;
-    font-size: 76px; line-height: 1.18; color: var(--ink);
+  .audio .play::after {
+    content: ""; border-top: 17px solid transparent; border-bottom: 17px solid transparent;
+    border-left: 27px solid #0a7cff; margin-left: 7px;
   }
-  #reveal .quiet { font-size: 32px; color: var(--muted); letter-spacing: .02em }
-  #reveal .url { font-size: 30px; color: var(--rose); letter-spacing: .06em; margin-top: 20px }
+  .audio.playing .play::after {
+    border: 0; width: 22px; height: 26px; margin: 0;
+    border-left: 8px solid #0a7cff; border-right: 8px solid #0a7cff;
+  }
+  .wave { display: flex; align-items: center; gap: 6px; height: 60px; flex: 1 }
+  .wave i {
+    display: block; width: 6px; border-radius: 3px; background: rgba(255,255,255,.42);
+    transition: background .12s linear;
+  }
+  .wave i.on { background: #fff }
+  .audio .dur { color: rgba(255,255,255,.85); font-size: 30px; font-variant-numeric: tabular-nums }
 
-  /* ── controls (never recorded) ─────────────────────────────────────────── */
-  #ui { display: flex; gap: .6rem; flex-wrap: wrap; justify-content: center; max-width: 44rem }
+  /* The tap. A real finger press produces a highlight, and its absence reads as a
+     UI that animated by itself. */
+  .ripple {
+    position: absolute; width: 190px; height: 190px; border-radius: 50%;
+    background: rgba(255,255,255,.28); transform: translate(-50%,-50%) scale(.2);
+    opacity: 0; pointer-events: none; z-index: 9;
+  }
+  .ripple.go { animation: tap .55s ease-out forwards }
+  @keyframes tap {
+    0% { opacity: .9; transform: translate(-50%,-50%) scale(.2) }
+    100% { opacity: 0; transform: translate(-50%,-50%) scale(1.5) }
+  }
+
+  /* ── iOS input bar ─────────────────────────────────────────────────────── */
+  .input {
+    position: absolute; bottom: 0; left: 0; right: 0; z-index: 3;
+    background: rgba(28,28,30,.82); backdrop-filter: blur(20px);
+    border-top: 1px solid rgba(255,255,255,.09);
+    padding: 26px 34px 62px; display: flex; align-items: center; gap: 26px;
+  }
+  .circ { width: 74px; height: 74px; border-radius: 50%; background: #2c2c2e; flex: 0 0 auto;
+          display: grid; place-items: center; color: #a1a1a6; font-size: 40px }
+  .field {
+    flex: 1; height: 74px; border: 3px solid #3a3a3c; border-radius: 37px;
+    display: flex; align-items: center; padding: 0 30px; color: #8e8e93; font-size: 36px;
+  }
+  .homebar { position: absolute; bottom: 22px; left: 50%; transform: translateX(-50%);
+             width: 380px; height: 10px; border-radius: 5px; background: rgba(255,255,255,.35) }
+
+  /* ── safe zones (never recorded) ────────────────────────────────────────── */
+  .guide { position: absolute; left: 0; right: 0; background: rgba(255,60,60,.13);
+           border-block: 1px dashed rgba(255,80,80,.55); z-index: 20; display: none }
+  body.guides .guide { display: block }
+  .guide.t { top: 0; height: 220px } .guide.b { bottom: 0; height: 420px }
+
+  /* ── controls ──────────────────────────────────────────────────────────── */
+  #ui { display: flex; gap: .5rem; flex-wrap: wrap; justify-content: center; max-width: 46rem }
   body.recording #ui, body.recording #help { visibility: hidden }
-  button {
-    font: 500 .85rem/1 inherit; background: #2a2521; color: #e8e2da; border: 1px solid #3a342e;
-    border-radius: 4px; padding: .55rem .9rem; cursor: pointer;
-  }
-  button:hover { background: #3a342e }
-  #help { font-size: .78rem; line-height: 1.7; max-width: 44rem; text-align: center }
-  kbd { background: #2a2521; border: 1px solid #3a342e; border-radius: 3px; padding: .1rem .3rem;
-        font-size: .9em }
+  button { font: 500 .82rem/1 inherit; background: #1c1c1e; color: #e6e2dc; border: 1px solid #333;
+           border-radius: 5px; padding: .5rem .85rem; cursor: pointer }
+  button:hover { background: #2c2c2e }
+  #help { font-size: .76rem; line-height: 1.75; max-width: 46rem; text-align: center }
+  kbd { background: #1c1c1e; border: 1px solid #333; border-radius: 3px; padding: .1rem .3rem }
 </style>
 </head>
 <body class="guides">
 
 <div id="ui">
-  <button onclick="play()">▶ Play (Space)</button>
+  <button onclick="play()">▶ Replay (Space)</button>
   <button onclick="document.body.classList.toggle('guides')">Safe zones (G)</button>
   <button onclick="document.body.classList.toggle('recording')">Hide controls (R)</button>
+  <button onclick="document.body.classList.toggle('nodrift')">Drift on/off</button>
   <button onclick="setScale(1)">100% (F)</button>
   <button onclick="fit()">Fit</button>
-  <button onclick="setVariant(0)">Hook A</button>
-  <button onclick="setVariant(1)">Hook B</button>
-  <button onclick="setVariant(2)">Hook C</button>
+  <button onclick="setHook(0)">Hook A</button>
+  <button onclick="setHook(1)">Hook B</button>
+  <button onclick="setHook(2)">Hook C</button>
 </div>
 
 <div id="stage">
-  <div class="guide top"></div>
-  <div class="guide bottom"></div>
+  <div class="guide t"></div>
+  <div class="guide b"></div>
 
-  <header>
-    <img class="avatar" id="avatar" src="photos/milo.jpg" alt="">
-    <div class="who" id="who">Milo</div>
-    <div class="sub" id="sub">Delivered — never read</div>
-  </header>
+  <div id="phone">
+    <div class="notch"></div>
+    <div class="status">
+      <span id="clock">9:41</span>
+      <span class="right">
+        <span class="bars"><i></i><i></i><i></i><i></i></span>
+        <span class="batt"><span style="width:64%"></span></span>
+      </span>
+    </div>
 
-  <div id="thread"></div>
+    <div class="nav">
+      <div class="chev"></div>
+      <div class="who">
+        <img id="avatar" src="photos/milo.jpg" alt="">
+        <span class="name" id="contact">Milo
+          <svg viewBox="0 0 8 14" fill="none"><path d="M1 1l6 6-6 6" stroke="#8e8e93" stroke-width="2"/></svg>
+        </span>
+      </div>
+      <div class="facetime"></div>
+    </div>
 
-  <div id="reveal">
-    <div class="line" id="revealLine">Then it said his name.</div>
-    <div class="quiet">A song made from the things you don’t want to forget.</div>
-    <div class="url">tailsweremember.com</div>
+    <div id="thread"></div>
+
+    <div class="input">
+      <span class="circ">+</span>
+      <span class="field">iMessage</span>
+      <span class="circ">↑</span>
+      <div class="homebar"></div>
+    </div>
+
+    <div class="ripple" id="ripple"></div>
   </div>
 </div>
 
 <div id="help">
-  <kbd>Space</kbd> play · <kbd>G</kbd> safe zones · <kbd>R</kbd> hide controls · <kbd>F</kbd> 100%<br>
-  Record the ivory frame only. Timings are built for a ~21s audio cut; change <code>SPEED</code> in the source to stretch or compress.
+  <kbd>Space</kbd> replay · <kbd>G</kbd> safe zones · <kbd>R</kbd> hide controls · <kbd>F</kbd> 100%<br>
+  No brand, no URL, no end card — on purpose. The CTA lives in the caption and the bio, not the video.
 </div>
 
 <script>
 /* ────────────────────────────────────────────────────────────────────────────
-   THE SCRIPT
-
-   Every message is short on purpose. People read about three words a second on
-   a phone, slower when they're upset, and a bubble nobody finishes is a bubble
-   that did nothing. Nothing here is longer than nine words.
-
-   The order is the engine: sofa, dog food, his spot, the gate, the recall, the
-   apology, the gift. Mundane to devastating. Opening on grief gives the viewer
-   nowhere to go and they scroll; opening on a joke about a sofa earns the four
-   seconds you need to land the last one.
-
-   `at` is seconds from the start. `beat` marks the two that carry the reel —
-   they get extra space and the rose bubble.
+   Edit these two blocks and nothing else.
    ──────────────────────────────────────────────────────────────────────────── */
 const SPEED = 1;
+const CONTACT = "Milo";
+const PET = "Milo";
 
-/* Sits above the first message. Vague on purpose — a specific date invites
-   arithmetic about how long ago, which is not what you want anyone doing. */
-const DATE_LABEL = "Today";
+/*
+  Short on purpose: people read about three words a second on a phone, slower when
+  they are upset, and a bubble nobody finishes did nothing.
 
+  The order is the whole engine. Sofa, dog food, his spot, the gate, the recall,
+  the apology. Mundane to devastating. Opening on grief leaves a viewer nowhere to
+  go and they scroll; opening on a joke about a sofa buys the four seconds you need
+  to land the apology.
+*/
 const MESSAGES = [
   { at: 0.0,  text: "you'd hate the new sofa" },
-  { at: 2.4,  text: "I still buy the small bags by accident" },
-  { at: 5.0,  text: "there's a plant in your spot now" },
-  { at: 7.4,  text: "it's not the same" },
-  { at: 9.6,  text: "I keep listening for the gate" },
-  { at: 12.2, text: "eleven years and I never had to call you twice" },
-  { at: 15.4, text: "I'm sorry I wasn't home that morning", beat: true },
-  { at: 18.4, text: "I made you something. I hope it's okay.", beat: true },
+  { at: 2.3,  text: "I still buy the small bags by accident" },
+  { at: 4.8,  text: "there's a plant in your spot now" },
+  { at: 7.0,  text: "it's not the same" },
+  { at: 9.2,  text: "I keep listening for the gate" },
+  { at: 11.8, text: "eleven years and I never had to call you twice" },
+  { at: 15.0, text: "I'm sorry I wasn't home that morning" },
 ];
 
-/* The typing indicator appears near the end and never resolves. That absence is
-   the point — a reply would break it. */
-const TYPING_AT = 20.4;
-const REVEAL_AT = 21.6;
+/* The audio attachment, the tap, and the fill. Line these up in CapCut so the
+   vocal that says the name lands about a second into the fill. */
+const AUDIO_AT  = 17.6;
+const TAP_AT    = 19.0;
+const FILL_FROM = 19.4;
+const FILL_TO   = 25.0;
 
-/* Three first-message variants. The shot list never changes; only the opening
-   line does. Post all three across a week and let the algorithm choose — that is
-   cheaper than guessing which hook works. */
 const HOOKS = [
   "you'd hate the new sofa",
   "I found your hair on my coat today",
   "I still say goodnight out loud",
 ];
 
+/* ──────────────────────────────────────────────────────────────────────────── */
 const thread = document.getElementById('thread');
-const reveal = document.getElementById('reveal');
+const ripple = document.getElementById('ripple');
 let timers = [];
+let raf = null;
+
+document.getElementById('contact').firstChild.textContent = CONTACT + ' ';
 
 function clear() {
   timers.forEach(clearTimeout);
   timers = [];
+  if (raf) cancelAnimationFrame(raf);
   thread.innerHTML = '';
-  reveal.classList.remove('on');
+  ripple.classList.remove('go');
 }
 
-function addMessage(m) {
-  const wrap = document.createElement('div');
-  wrap.className = 'rowwrap';
+function bubble(text, cls) {
   const row = document.createElement('div');
-  row.className = 'row' + (m.beat ? ' beat' : '');
-  const bubble = document.createElement('div');
-  bubble.className = 'bubble';
-  bubble.textContent = m.text;
-  row.appendChild(bubble);
-  wrap.appendChild(row);
-  thread.appendChild(wrap);
-  // No scrollTop needed: the column is bottom-aligned and clipped at the top, so
-  // the newest message is always the one sitting on the baseline.
-}
-
-function addTyping() {
-  const t = document.createElement('div');
-  t.className = 'typing';
-  t.innerHTML = '<div class="bubble"><div class="dots"><i></i><i></i><i></i></div></div>';
-  thread.appendChild(t);
+  row.className = 'row' + (cls ? ' ' + cls : '');
+  const b = document.createElement('div');
+  b.className = 'b' + (cls === 'audiorow' ? ' audio' : '');
+  if (cls === 'audiorow') b.innerHTML = text; else b.textContent = text;
+  row.appendChild(b);
+  thread.appendChild(row);
+  return b;
 }
 
 function play() {
   clear();
-  const date = document.createElement('div');
-  date.className = 'datemark';
-  date.textContent = DATE_LABEL;
-  thread.appendChild(date);
+
+  // iOS puts a bold day and a light time on its divider.
+  const d = document.createElement('div');
+  d.className = 'divider';
+  d.innerHTML = 'Today <b>9:41 AM</b>';
+  thread.appendChild(d);
+
   for (const m of MESSAGES) {
-    timers.push(setTimeout(() => addMessage(m), m.at * 1000 * SPEED));
+    timers.push(setTimeout(() => bubble(m.text), m.at * 1000 * SPEED));
   }
-  timers.push(setTimeout(addTyping, TYPING_AT * 1000 * SPEED));
-  timers.push(setTimeout(() => reveal.classList.add('on'), REVEAL_AT * 1000 * SPEED));
+
+  // "Delivered" under the last text. Quietly awful, and completely native.
+  timers.push(setTimeout(() => {
+    const s = document.createElement('div');
+    s.className = 'delivered';
+    s.textContent = 'Delivered';
+    thread.appendChild(s);
+  }, (MESSAGES[MESSAGES.length - 1].at + 1.1) * 1000 * SPEED));
+
+  // The audio attachment.
+  timers.push(setTimeout(() => {
+    const bars = Array.from({ length: 34 }, (_, i) => {
+      // A believable envelope: quiet at the top and tail, fuller through the middle.
+      const t = i / 33;
+      const h = 14 + Math.round(46 * Math.pow(Math.sin(Math.PI * t), 0.7) * (0.72 + 0.28 * Math.sin(i * 1.7)));
+      return `<i style="height:${Math.max(10, Math.min(60, h))}px"></i>`;
+    }).join('');
+    const el = bubble(
+      `<span class="play"></span><span class="wave">${bars}</span><span class="dur" id="dur">0:21</span>`,
+      'audiorow'
+    );
+    el.id = 'audiobubble';
+  }, AUDIO_AT * 1000 * SPEED));
+
+  // The tap, positioned over the play button.
+  timers.push(setTimeout(() => {
+    const el = document.getElementById('audiobubble');
+    if (!el) return;
+    const p = el.querySelector('.play').getBoundingClientRect();
+    const s = document.getElementById('stage').getBoundingClientRect();
+    const scale = s.width / 1080;
+    ripple.style.left = ((p.left + p.width / 2 - s.left) / scale) + 'px';
+    ripple.style.top  = ((p.top + p.height / 2 - s.top) / scale) + 'px';
+    ripple.classList.remove('go');
+    void ripple.offsetWidth;
+    ripple.classList.add('go');
+    el.classList.add('playing');
+  }, TAP_AT * 1000 * SPEED));
+
+  // The fill. Bars light left to right over the length of the audio cut.
+  timers.push(setTimeout(() => {
+    const el = document.getElementById('audiobubble');
+    if (!el) return;
+    const bars = [...el.querySelectorAll('.wave i')];
+    const dur = el.querySelector('#dur');
+    const start = performance.now();
+    const span = (FILL_TO - FILL_FROM) * 1000 * SPEED;
+    (function step(now) {
+      const p = Math.min(1, (now - start) / span);
+      const n = Math.floor(p * bars.length);
+      bars.forEach((b, i) => b.classList.toggle('on', i < n));
+      if (dur) {
+        const secs = Math.round(p * 21);
+        dur.textContent = '0:' + String(secs).padStart(2, '0');
+      }
+      if (p < 1) raf = requestAnimationFrame(step);
+    })(start);
+  }, FILL_FROM * 1000 * SPEED));
 }
 
-function setVariant(i) {
-  MESSAGES[0].text = HOOKS[i];
-  play();
-}
+function setHook(i) { MESSAGES[0].text = HOOKS[i]; play(); }
 
-/* Scale the 1080-wide stage down so it's visible on a normal display. Recording
-   at less than 100% costs real sharpness on text, so F is there for when you
-   have the screen for it. */
 function setScale(s) {
-  document.getElementById('stage').style.transform = `scale(${s})`;
-  document.getElementById('stage').style.marginBottom = `${-1920 * (1 - s)}px`;
+  const st = document.getElementById('stage');
+  st.style.transform = `scale(${s})`;
+  st.style.marginBottom = `${-1920 * (1 - s)}px`;
 }
 function fit() {
-  const s = Math.min((window.innerHeight - 200) / 1920, (window.innerWidth - 80) / 1080);
-  setScale(Math.min(s, 1));
+  setScale(Math.min((window.innerHeight - 190) / 1920, (window.innerWidth - 70) / 1080, 1));
 }
 
 addEventListener('keydown', (e) => {
   if (e.code === 'Space') { e.preventDefault(); play(); }
-  if (e.key.toLowerCase() === 'g') document.body.classList.toggle('guides');
-  if (e.key.toLowerCase() === 'r') document.body.classList.toggle('recording');
-  if (e.key.toLowerCase() === 'f') setScale(1);
+  const k = e.key.toLowerCase();
+  if (k === 'g') document.body.classList.toggle('guides');
+  if (k === 'r') document.body.classList.toggle('recording');
+  if (k === 'f') setScale(1);
 });
-
 addEventListener('resize', fit);
 fit();
 play();
